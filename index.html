@@ -6,7 +6,6 @@
   <title>XOM TV - Alla iranska TV-kanaler</title>
   <script src="https://cdn.jsdelivr.net/npm/hls.js@latest"></script>
   <style>
-    /* CSS-stilar förblir oförändrade */
     * {
       margin: 0;
       padding: 0;
@@ -97,10 +96,12 @@
         z-index: 1000;
         border-radius: 0;
         padding: 20px;
+        transform: translateX(-100%);
+        transition: transform 0.3s ease;
       }
       
-      .channel-list.hidden {
-        display: none;
+      .channel-list.show {
+        transform: translateX(0);
       }
     }
 
@@ -203,26 +204,60 @@
       display: flex;
       justify-content: space-between;
       align-items: center;
+      background: rgba(255,255,255,0.1);
     }
 
     .channel-item.green {
-      background: #28a745;
+      background: rgba(40, 167, 69, 0.8);
     }
 
     .channel-item.red {
-      background: #dc3545;
+      background: rgba(220, 53, 69, 0.8);
     }
 
     .channel-item.orange {
-      background: #fd7e14;
+      background: rgba(253, 126, 20, 0.8);
     }
 
     .channel-item.cyan {
-      background: #17a2b8;
+      background: rgba(23, 162, 184, 0.8);
     }
 
     .channel-item.purple {
-      background: #6f42c1;
+      background: rgba(111, 66, 193, 0.8);
+    }
+
+    .channel-item.blue {
+      background: rgba(0, 123, 255, 0.8);
+    }
+
+    .channel-item.pink {
+      background: rgba(232, 62, 140, 0.8);
+    }
+
+    .channel-item.grey {
+      background: rgba(108, 117, 125, 0.8);
+    }
+
+    .channel-item.yellow {
+      background: rgba(255, 193, 7, 0.8);
+    }
+
+    .channel-item.maroon {
+      background: rgba(128, 0, 0, 0.8);
+    }
+
+    .channel-item.brown {
+      background: rgba(139, 69, 19, 0.8);
+    }
+
+    .channel-item.magenta {
+      background: rgba(255, 0, 255, 0.8);
+    }
+
+    .channel-item.beige {
+      background: rgba(245, 245, 220, 0.8);
+      color: #333;
     }
 
     .channel-item:hover {
@@ -286,7 +321,7 @@
   </div>
 
   <div class="nav-buttons">
-    <button class="nav-btn" onclick="showAllChannels()">Alla kanaler</button>
+    <button class="nav-btn active" onclick="showAllChannels()">Alla kanaler</button>
     <button class="nav-btn" onclick="filterCategory('national')">1. Nationella</button>
     <button class="nav-btn" onclick="filterCategory('regional')">2. Regionala</button>
     <button class="nav-btn" onclick="filterCategory('kurdish')">3. Kurdiska</button>
@@ -455,41 +490,39 @@
         { name: 'Jamawar TV', url: 'https://karwan.tv/jamawar-tv', method: 'external', color: 'purple' },
         { name: 'Barin Movies', url: 'https://karwan.tv/barin-movies', method: 'external', color: 'purple' },
         { name: 'Astera Movies', url: 'https://karwan.tv/astera-movies', method: 'external', color: 'purple' },
-        { name: 'Astera Movies', url: 'https://karwan.tv/astera-movies', method: 'external', color: 'purple' },
         { name: 'Derwaze TV', url: 'https://karwan.tv/derwaze-tv', method: 'external', color: 'purple' },
         { name: 'Bnar Action', url: 'https://karwan.tv/bnar-action', method: 'external', color: 'purple' },
         { name: 'MMN Drama', url: 'https://karwan.tv/mmn-drama', method: 'external', color: 'purple' },
         { name: 'MMN Show', url: 'https://karwan.tv/mmn-show', method: 'external', color: 'purple' },
         { name: 'Astera Show', url: 'https://karwan.tv/astera-show', method: 'external', color: 'purple' },
         { name: 'Infinity TV', url: 'https://karwan.tv/infinity-tv', method: 'external', color: 'purple' },
-        { name: 'Astera Family', url: 'https://karwan.tv/astera-family', method: 'external', color: 'purple' }
+        { name: 'Astera Family', url: 'https://karwan.tv/astera-family', method: 'external', color: 'purple' },
         { name: 'Barin Family', url: 'https://karwan.tv/barin-family', method: 'external', color: 'purple' },
         { name: 'Srusht TV', url: 'https://karwan.tv/srusht-tv', method: 'external', color: 'purple' },
         { name: 'Avar TV', url: 'https://karwan.tv/avar-tv', method: 'external', color: 'pink' },
-        { name: 'Halabja TV', url: 'https://karwan.tv/halabja-tv', method: 'external', color: 'Pink' },
-        { name: 'Rozh TV', url: 'https://karwan.tv/rozh-tv', method: 'external', color: 'Pink' },
-        { name: 'Speda Drama', url: 'https://karwan.tv/speda-drama', method: 'external', color: 'Pink' },
+        { name: 'Halabja TV', url: 'https://karwan.tv/halabja-tv', method: 'external', color: 'pink' },
+        { name: 'Rozh TV', url: 'https://karwan.tv/rozh-tv', method: 'external', color: 'pink' },
+        { name: 'Speda Drama', url: 'https://karwan.tv/speda-drama', method: 'external', color: 'pink' },
         { name: 'Delal TV', url: 'https://karwan.tv/delal-tv', method: 'external', color: 'pink' },
-        { name: 'Kurdmax TV', url: 'https://karwan.tv/kurdmax-tv', method: 'external', color: 'Pink' },
-        { name: 'Zaxo TV', url: 'https://karwan.tv/zaxo-tv', method: 'external', color: 'Pink' },
-        { name: 'Kurdmax Show TV', url: 'https://karwan.tv/kurdmax-show-tv', method: 'external', color: 'Pink' },
-        { name: 'Mix TV', url: 'https://karwan.tv/mix-tv', method: 'external', color: 'Pink' },
-        { name: 'Mix TV', url: 'https://karwan.tv/mix-tv', method: 'external', color: 'Pink' },
+        { name: 'Kurdmax TV', url: 'https://karwan.tv/kurdmax-tv', method: 'external', color: 'pink' },
+        { name: 'Zaxo TV', url: 'https://karwan.tv/zaxo-tv', method: 'external', color: 'pink' },
+        { name: 'Kurdmax Show TV', url: 'https://karwan.tv/kurdmax-show-tv', method: 'external', color: 'pink' },
+        { name: 'Mix TV', url: 'https://karwan.tv/mix-tv', method: 'external', color: 'pink' },
         { name: 'Karwan Duhok TV', url: 'https://karwan.tv/duhok-tv', method: 'external', color: 'grey' },
         { name: 'Cihan TV', url: 'https://karwan.tv/cihan-tv', method: 'external', color: 'grey' },
-        { name: 'Khak TV', url: 'https://karwan.tv/khak-tv', method: 'external', color: ' grey' },
+        { name: 'Khak TV', url: 'https://karwan.tv/khak-tv', method: 'external', color: 'grey' },
         { name: 'Zed TV Plus', url: 'https://karwan.tv/zed-tv-plus', method: 'external', color: 'grey' },
-        { name: 'Karwan Slemani TV', url: 'https://karwan.tv/slemani-tv', method: 'external', color: ' grey' },
+        { name: 'Karwan Slemani TV', url: 'https://karwan.tv/slemani-tv', method: 'external', color: 'grey' },
         { name: 'Sima TV', url: 'https://karwan.tv/sima-tv', method: 'external', color: 'yellow' },
         { name: 'Shna TV', url: 'https://karwan.tv/shna-tv', method: 'external', color: 'yellow' },
-        { name: 'Kurd 7', url: 'https://karwan.tv/kurd-7', method: 'external', color: ' yellow' },
-        { name: 'Kurdmax Music', url: 'https://karwan.tv/kurdmax-music', method: 'external', color: ' yellow' },
+        { name: 'Kurd 7', url: 'https://karwan.tv/kurd-7', method: 'external', color: 'yellow' },
+        { name: 'Kurdmax Music', url: 'https://karwan.tv/kurdmax-music', method: 'external', color: 'yellow' },
         { name: 'MMN Documentary', url: 'https://karwan.tv/mmn-clip', method: 'external', color: 'yellow' },
         { name: 'Astera Culture', url: 'https://karwan.tv/astera-culture', method: 'external', color: 'yellow' },
-        { name: 'Derin TV', url: 'https://karwan.tv/derin-tv', method: 'external', color: ' yellow' },
-        { name: 'Derin TV', url: 'https://karwan.tv/reng-tv', method: 'external', color: ' yellow' },
+        { name: 'Derin TV', url: 'https://karwan.tv/derin-tv', method: 'external', color: 'yellow' },
+        { name: 'Reng TV', url: 'https://karwan.tv/reng-tv', method: 'external', color: 'yellow' },
         { name: 'Euro Kurd TV', url: 'https://karwan.tv/euro-kurd-tv', method: 'external', color: 'yellow' },
-        { name: 'Kurdana TV', url: 'https://karwan.tv/kurdana-tv', method: 'external', color: 'yellow' }
+        { name: 'Kurdana TV', url: 'https://karwan.tv/kurdana-tv', method: 'external', color: 'yellow' },
         { name: 'Azadi TV', url: 'https://karwan.tv/azadi-tv', method: 'external', color: 'yellow' },
         { name: 'Kanal 21', url: 'https://karwan.tv/kanali-21', method: 'external', color: 'yellow' },
         { name: 'MMN Documentary', url: 'https://karwan.tv/mmn-documentary', method: 'external', color: 'maroon' },
@@ -504,18 +537,18 @@
         { name: 'Farmoda TV', url: 'https://karwan.tv/farmoda-tv', method: 'external', color: 'green' },
         { name: 'Ranya TV', url: 'https://karwan.tv/ranya-tv', method: 'external', color: 'green' },
         { name: 'Aro Family', url: 'https://karwan.tv/aro-family', method: 'external', color: 'green' },
-        { name: 'Dever TV', url: 'https://karwan.tv/dever-tv', method: 'external', color: 'Brown' },
-        { name: 'Rasan TV', url: 'https://karwan.tv/rasan-tv', method: 'external', color: 'Brown' },
-        { name: 'Dimen TV', url: 'https://karwan.tv/dimen-tv', method: 'external', color: 'Magenta' },
-        { name: 'Bangxwazen Badinan TV', url: 'https://karwan.tv/bangxwazen-badinan-tv', method: 'external', color: 'Magenta' },
-        { name: 'Esra TV', url: 'https://karwan.tv/esra-tv', method: 'external', color: 'Magenta' },
-        { name: 'Kurd Channel', url: 'https://karwan.tv/kurd-channel', method: 'external', color: 'Beige' },
-        { name: 'Cira TV', url: 'https://karwan.tv/cira-tv', method: 'external', color: 'Beige' },
-        { name: 'Karwan Nalia TV', url: 'https://karwan.tv/nalia-tv', method: 'external', color: 'Beige' }
-        { name: 'Rojhelat TV', url: 'https://karwan.tv/rojhelat-tv', method: 'external', color: 'Beige' },
-        { name: 'Speda TV', url: 'https://karwan.tv/speda-tv', method: 'external', color: 'Beige' },
-        { name: 'Kirkuk TV', url: 'https://karwan.tv/kirkuk-tv', method: 'external', color: 'Beige' },
-        ],
+        { name: 'Dever TV', url: 'https://karwan.tv/dever-tv', method: 'external', color: 'brown' },
+        { name: 'Rasan TV', url: 'https://karwan.tv/rasan-tv', method: 'external', color: 'brown' },
+        { name: 'Dimen TV', url: 'https://karwan.tv/dimen-tv', method: 'external', color: 'magenta' },
+        { name: 'Bangxwazen Badinan TV', url: 'https://karwan.tv/bangxwazen-badinan-tv', method: 'external', color: 'magenta' },
+        { name: 'Esra TV', url: 'https://karwan.tv/esra-tv', method: 'external', color: 'magenta' },
+        { name: 'Kurd Channel', url: 'https://karwan.tv/kurd-channel', method: 'external', color: 'beige' },
+        { name: 'Cira TV', url: 'https://karwan.tv/cira-tv', method: 'external', color: 'beige' },
+        { name: 'Karwan Nalia TV', url: 'https://karwan.tv/nalia-tv', method: 'external', color: 'beige' },
+        { name: 'Rojhelat TV', url: 'https://karwan.tv/rojhelat-tv', method: 'external', color: 'beige' },
+        { name: 'Speda TV', url: 'https://karwan.tv/speda-tv', method: 'external', color: 'beige' },
+        { name: 'Kirkuk TV', url: 'https://karwan.tv/kirkuk-tv', method: 'external', color: 'beige' }
+      ],
       websites: [
         { name: 'IMVBox', url: 'https://www.imvbox.com/en', method: 'external', color: 'orange' },
         { name: 'Persianity', url: 'https://persianity.com', method: 'external', color: 'orange' },
@@ -536,10 +569,12 @@
     let hls;
     let currentChannel = { name: 'TV1', url: 'https://m.telewebion.com/embed/live/tv1?autoplay=1&mute=0', method: 'iframe' };
     let favorites = JSON.parse(localStorage.getItem('favorites') || '[]');
+    let currentFilter = null;
 
     function renderChannels(filter = null) {
       const container = document.getElementById('channels-container');
       let html = '';
+      currentFilter = filter;
 
       Object.keys(channels).forEach(category => {
         if (filter && filter !== category) return;
@@ -557,9 +592,9 @@
         channels[category].forEach(ch => {
           const isFav = favorites.some(f => f.name === ch.name);
           html += `
-            <div class="channel-item ${ch.color}" onclick="loadChannel('${ch.url}', '${ch.name}', '${ch.method || 'hls'}')">
+            <div class="channel-item ${ch.color}" onclick="loadChannel('${ch.url.replace(/'/g, "\\'")}', '${ch.name.replace(/'/g, "\\'")}', '${ch.method || 'hls'}')">
               <span>${ch.name}</span>
-              <button class="favorite-btn" onclick="event.stopPropagation(); toggleFavorite('${ch.name}', '${ch.url}', '${ch.method || 'hls'}')">
+              <button class="favorite-btn" onclick="event.stopPropagation(); toggleFavorite('${ch.name.replace(/'/g, "\\'")}', '${ch.url.replace(/'/g, "\\'")}', '${ch.method || 'hls'}')">
                 ${isFav ? '⭐' : '☆'}
               </button>
             </div>
@@ -574,12 +609,10 @@
     function updateActiveChannel() {
       document.querySelectorAll('.channel-item').forEach(item => {
         item.classList.remove('active');
-        item.classList.remove('red');
         
         const channelName = item.querySelector('span').textContent;
         if (channelName === currentChannel.name) {
           item.classList.add('active');
-          item.classList.add('red');
         }
       });
     }
@@ -592,24 +625,29 @@
         favorites.push({ name, url, method });
       }
       localStorage.setItem('favorites', JSON.stringify(favorites));
-      renderChannels();
+      renderChannels(currentFilter);
     }
 
     function showAllChannels() {
+      document.querySelectorAll('.nav-btn').forEach(btn => btn.classList.remove('active'));
+      document.querySelector('.nav-btn:first-child').classList.add('active');
       renderChannels();
     }
 
     function filterCategory(category) {
+      document.querySelectorAll('.nav-btn').forEach(btn => btn.classList.remove('active'));
+      event.target.classList.add('active');
       renderChannels(category);
     }
 
     function toggleChannelList() {
-      document.getElementById('channel-list').classList.toggle('hidden');
+      const list = document.getElementById('channel-list');
+      list.classList.toggle('show');
     }
 
     function loadChannel(url, name, method = 'hls') {
       if (window.innerWidth <= 768) {
-        document.getElementById('channel-list').classList.add('hidden');
+        document.getElementById('channel-list').classList.remove('show');
       }
       
       currentChannel = { name, url, method };
@@ -714,8 +752,13 @@
     }
 
     // Initialize
-    renderChannels();
-    loadChannel(currentChannel.url, currentChannel.name, currentChannel.method);
+    document.addEventListener('DOMContentLoaded', function() {
+      renderChannels();
+      loadChannel(currentChannel.url, currentChannel.name, currentChannel.method);
+      
+      // Set first nav button as active
+      document.querySelector('.nav-btn:first-child').classList.add('active');
+    });
   </script>
 </body>
 </html>
