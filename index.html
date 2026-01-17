@@ -41,6 +41,7 @@
       gap: 10px;
       flex-wrap: wrap;
       padding: 15px;
+      position: relative;
     }
 
     .nav-btn {
@@ -52,11 +53,50 @@
       cursor: pointer;
       font-weight: bold;
       transition: all 0.3s;
+      position: relative;
     }
 
     .nav-btn:hover, .nav-btn.active {
       background: #45b393;
       transform: scale(1.05);
+    }
+
+    .dropdown-menu {
+      position: absolute;
+      top: 100%;
+      left: 50%;
+      transform: translateX(-50%);
+      background: rgba(0,0,0,0.9);
+      border-radius: 10px;
+      padding: 10px;
+      min-width: 200px;
+      z-index: 1000;
+      margin-top: 5px;
+      display: none;
+      box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+    }
+
+    .dropdown-menu.show {
+      display: block;
+    }
+
+    .dropdown-item {
+      padding: 10px 15px;
+      cursor: pointer;
+      border-radius: 5px;
+      transition: all 0.2s;
+      margin: 2px 0;
+      background: rgba(255,255,255,0.1);
+    }
+
+    .dropdown-item:hover {
+      background: rgba(78, 204, 163, 0.3);
+      transform: translateX(5px);
+    }
+
+    .dropdown-item.active {
+      background: rgba(78, 204, 163, 0.5);
+      font-weight: bold;
     }
 
     .server-info {
@@ -102,6 +142,15 @@
       
       .channel-list.show {
         transform: translateX(0);
+      }
+
+      .dropdown-menu {
+        position: fixed;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        width: 90%;
+        max-width: 300px;
       }
     }
 
@@ -325,7 +374,20 @@
     <button class="nav-btn" onclick="filterCategory('national')">1. Nationella</button>
     <button class="nav-btn" onclick="filterCategory('regional')">2. Regionala</button>
     <button class="nav-btn" onclick="filterCategory('kurdish')">3. Kurdiska</button>
-    <button class="nav-btn" onclick="filterCategory('karwan')">4. Karwan TV</button>
+    <button class="nav-btn" id="karwan-btn" onclick="toggleKarwanDropdown()">4. Karwan TV</button>
+    <div class="dropdown-menu" id="karwan-dropdown">
+      <div class="dropdown-item" onclick="filterKarwanCategory('all')">Alla Karwan kanaler</div>
+      <div class="dropdown-item" onclick="filterKarwanCategory('blue')">Kids</div>
+      <div class="dropdown-item" onclick="filterKarwanCategory('purple')">Movie</div>
+      <div class="dropdown-item" onclick="filterKarwanCategory('pink')">Dubbad</div>
+      <div class="dropdown-item" onclick="filterKarwanCategory('grey')">Blandad</div>
+      <div class="dropdown-item" onclick="filterKarwanCategory('yellow')">Music</div>
+      <div class="dropdown-item" onclick="filterKarwanCategory('maroon')">Dokumentär</div>
+      <div class="dropdown-item" onclick="filterKarwanCategory('green')">Dini</div>
+      <div class="dropdown-item" onclick="filterKarwanCategory('brown')">Kultur</div>
+      <div class="dropdown-item" onclick="filterKarwanCategory('magenta')">Srodi Dini</div>
+      <div class="dropdown-item" onclick="filterKarwanCategory('beige')">Nyhet</div>
+    </div>
     <button class="nav-btn" onclick="filterCategory('websites')">5. Webbplatser</button>
   </div>
 
@@ -464,7 +526,6 @@
         { name: 'PDKI (HLS)', url: 'https://northtelecom.live/KURD.m3u8', color: 'green' },
         { name: 'Komala (HLS)', url: 'https://live.tvkomala.com/live/komala/playlist.m3u8', color: 'green' },
         { name: 'GK (HLS)', url: 'https://live.host247.net/gk/gksat/chunklist_w624411416.m3u8', color: 'green' },
-        { name: 'GK (HLS)', url: 'http://cdn3.wowza.com/1/OWNQVXVWc0dQclJz/RXJPdHJx/hls/live/playlist.m3u8', color: 'green' },
         { name: 'IRIB Kurdistan (HLS)', url: 'https://live.irib.ir/Channel-Live/smil:Channel5/playlist.m3u8', color: 'green' },
         { name: 'Ava TV (Web)', url: 'https://www.ava.news/livewatch', method: 'external', color: 'orange' },
         { name: 'Sahar TV (Web)', url: 'https://kurdish.sahartv.ir/live', method: 'external', color: 'orange' },
@@ -477,79 +538,97 @@
         { name: 'TRT Kurdî (HLS)', url: 'https://tv-trtkurdi.medya.trt.com.tr/master_1440.m3u8', color: 'green' }
       ],
       karwan: [
-        { name: 'Kidco TV', url: 'https://karwan.tv/kidco-tv', method: 'external', color: 'blue' },
-        { name: 'MMN Kids', url: 'https://karwan.tv/mmn-kids', method: 'external', color: 'blue' },
-        { name: 'NRT 3 Kids', url: 'https://karwan.tv/nrt-3-kids', method: 'external', color: 'blue' },
-        { name: 'Kurdmax Pepule', url: 'https://karwan.tv/kurdmax-pepule', method: 'external', color: 'blue' },
-        { name: 'Jojo Mama', url: 'https://karwan.tv/jojo-mama', method: 'external', color: 'blue' },
-        { name: 'Astera Baby', url: 'https://karwan.tv/astera-baby', method: 'external', color: 'blue' },
-        { name: 'MMN Movies', url: 'https://karwan.tv/mmn-movies', method: 'external', color: 'purple' },
-        { name: 'Soran Entertainment TV', url: 'https://karwan.tv/soran-entertainment-tv', method: 'external', color: 'purple' },
-        { name: 'Bnar Movies', url: 'https://karwan.tv/bnar-movies', method: 'external', color: 'purple' },
-        { name: 'Bnar TV', url: 'https://karwan.tv/bnar-tv', method: 'external', color: 'purple' },
-        { name: 'Befrin TV', url: 'https://karwan.tv/befrin-tv', method: 'external', color: 'purple' },
-        { name: 'Jamawar TV', url: 'https://karwan.tv/jamawar-tv', method: 'external', color: 'purple' },
-        { name: 'Barin Movies', url: 'https://karwan.tv/barin-movies', method: 'external', color: 'purple' },
-        { name: 'Astera Movies', url: 'https://karwan.tv/astera-movies', method: 'external', color: 'purple' },
-        { name: 'Derwaze TV', url: 'https://karwan.tv/derwaze-tv', method: 'external', color: 'purple' },
-        { name: 'Bnar Action', url: 'https://karwan.tv/bnar-action', method: 'external', color: 'purple' },
-        { name: 'MMN Drama', url: 'https://karwan.tv/mmn-drama', method: 'external', color: 'purple' },
-        { name: 'MMN Show', url: 'https://karwan.tv/mmn-show', method: 'external', color: 'purple' },
-        { name: 'Astera Show', url: 'https://karwan.tv/astera-show', method: 'external', color: 'purple' },
-        { name: 'Infinity TV', url: 'https://karwan.tv/infinity-tv', method: 'external', color: 'purple' },
-        { name: 'Astera Family', url: 'https://karwan.tv/astera-family', method: 'external', color: 'purple' },
-        { name: 'Barin Family', url: 'https://karwan.tv/barin-family', method: 'external', color: 'purple' },
-        { name: 'Srusht TV', url: 'https://karwan.tv/srusht-tv', method: 'external', color: 'purple' },
-        { name: 'Avar TV', url: 'https://karwan.tv/avar-tv', method: 'external', color: 'pink' },
-        { name: 'Halabja TV', url: 'https://karwan.tv/halabja-tv', method: 'external', color: 'pink' },
-        { name: 'Rozh TV', url: 'https://karwan.tv/rozh-tv', method: 'external', color: 'pink' },
-        { name: 'Speda Drama', url: 'https://karwan.tv/speda-drama', method: 'external', color: 'pink' },
-        { name: 'Delal TV', url: 'https://karwan.tv/delal-tv', method: 'external', color: 'pink' },
-        { name: 'Kurdmax TV', url: 'https://karwan.tv/kurdmax-tv', method: 'external', color: 'pink' },
-        { name: 'Zaxo TV', url: 'https://karwan.tv/zaxo-tv', method: 'external', color: 'pink' },
-        { name: 'Kurdmax Show TV', url: 'https://karwan.tv/kurdmax-show-tv', method: 'external', color: 'pink' },
-        { name: 'Mix TV', url: 'https://karwan.tv/mix-tv', method: 'external', color: 'pink' },
-        { name: 'Karwan Duhok TV', url: 'https://karwan.tv/duhok-tv', method: 'external', color: 'grey' },
-        { name: 'Cihan TV', url: 'https://karwan.tv/cihan-tv', method: 'external', color: 'grey' },
-        { name: 'Khak TV', url: 'https://karwan.tv/khak-tv', method: 'external', color: 'grey' },
-        { name: 'Zed TV Plus', url: 'https://karwan.tv/zed-tv-plus', method: 'external', color: 'grey' },
-        { name: 'Karwan Slemani TV', url: 'https://karwan.tv/slemani-tv', method: 'external', color: 'grey' },
-        { name: 'Sima TV', url: 'https://karwan.tv/sima-tv', method: 'external', color: 'yellow' },
-        { name: 'Shna TV', url: 'https://karwan.tv/shna-tv', method: 'external', color: 'yellow' },
-        { name: 'Kurd 7', url: 'https://karwan.tv/kurd-7', method: 'external', color: 'yellow' },
-        { name: 'Kurdmax Music', url: 'https://karwan.tv/kurdmax-music', method: 'external', color: 'yellow' },
-        { name: 'MMN Documentary', url: 'https://karwan.tv/mmn-clip', method: 'external', color: 'yellow' },
-        { name: 'Astera Culture', url: 'https://karwan.tv/astera-culture', method: 'external', color: 'yellow' },
-        { name: 'Derin TV', url: 'https://karwan.tv/derin-tv', method: 'external', color: 'yellow' },
-        { name: 'Reng TV', url: 'https://karwan.tv/reng-tv', method: 'external', color: 'yellow' },
-        { name: 'Euro Kurd TV', url: 'https://karwan.tv/euro-kurd-tv', method: 'external', color: 'yellow' },
-        { name: 'Kurdana TV', url: 'https://karwan.tv/kurdana-tv', method: 'external', color: 'yellow' },
-        { name: 'Azadi TV', url: 'https://karwan.tv/azadi-tv', method: 'external', color: 'yellow' },
-        { name: 'Kanal 21', url: 'https://karwan.tv/kanali-21', method: 'external', color: 'yellow' },
-        { name: 'MMN Documentary', url: 'https://karwan.tv/mmn-documentary', method: 'external', color: 'maroon' },
-        { name: 'Astera Documentary', url: 'https://karwan.tv/astera-documentary', method: 'external', color: 'maroon' },
-        { name: 'Reng Documentary', url: 'https://karwan.tv/reng-documentary', method: 'external', color: 'maroon' },
-        { name: 'Zed TV', url: 'https://karwan.tv/zed-tv', method: 'external', color: 'maroon' },
-        { name: 'NRT 4', url: 'https://karwan.tv/nrt-4', method: 'external', color: 'green' },
-        { name: 'Mihrab TV', url: 'https://karwan.tv/mihrab-tv', method: 'external', color: 'green' },
-        { name: 'UTV Duhok', url: 'https://karwan.tv/utv-duhok', method: 'external', color: 'green' },
-        { name: 'UTV Hawler', url: 'https://karwan.tv/utv-hawler', method: 'external', color: 'green' },
-        { name: 'Shar TV', url: 'https://karwan.tv/shar-tv', method: 'external', color: 'green' },
-        { name: 'Farmoda TV', url: 'https://karwan.tv/farmoda-tv', method: 'external', color: 'green' },
-        { name: 'Ranya TV', url: 'https://karwan.tv/ranya-tv', method: 'external', color: 'green' },
-        { name: 'Aro Family', url: 'https://karwan.tv/aro-family', method: 'external', color: 'green' },
-        { name: 'Dever TV', url: 'https://karwan.tv/dever-tv', method: 'external', color: 'brown' },
-        { name: 'Rasan TV', url: 'https://karwan.tv/rasan-tv', method: 'external', color: 'brown' },
-        { name: 'Dimen TV', url: 'https://karwan.tv/dimen-tv', method: 'external', color: 'magenta' },
-        { name: 'Bangxwazen Badinan TV', url: 'https://karwan.tv/bangxwazen-badinan-tv', method: 'external', color: 'magenta' },
-        { name: 'Esra TV', url: 'https://karwan.tv/esra-tv', method: 'external', color: 'magenta' },
-        { name: 'Kurd Channel', url: 'https://karwan.tv/kurd-channel', method: 'external', color: 'beige' },
-        { name: 'Cira TV', url: 'https://karwan.tv/cira-tv', method: 'external', color: 'beige' },
-        { name: 'Karwan Nalia TV', url: 'https://karwan.tv/nalia-tv', method: 'external', color: 'beige' },
-        { name: 'Rojhelat TV', url: 'https://karwan.tv/rojhelat-tv', method: 'external', color: 'beige' },
-        { name: 'Speda TV', url: 'https://karwan.tv/speda-tv', method: 'external', color: 'beige' },
-        { name: 'Kirkuk TV', url: 'https://karwan.tv/kirkuk-tv', method: 'external', color: 'beige' },
-        { name: 'Ava TV', url: 'https://karwan.tv/ava-tv', method: 'external', color: 'beige' }
+        // Kids (blue)
+        { name: 'Kidco TV', url: 'https://karwan.tv/kidco-tv', method: 'external', color: 'blue', subgroup: 'kids' },
+        { name: 'MMN Kids', url: 'https://karwan.tv/mmn-kids', method: 'external', color: 'blue', subgroup: 'kids' },
+        { name: 'NRT 3 Kids', url: 'https://karwan.tv/nrt-3-kids', method: 'external', color: 'blue', subgroup: 'kids' },
+        { name: 'Kurdmax Pepule', url: 'https://karwan.tv/kurdmax-pepule', method: 'external', color: 'blue', subgroup: 'kids' },
+        { name: 'Jojo Mama', url: 'https://karwan.tv/jojo-mama', method: 'external', color: 'blue', subgroup: 'kids' },
+        { name: 'Astera Baby', url: 'https://karwan.tv/astera-baby', method: 'external', color: 'blue', subgroup: 'kids' },
+        
+        // Movie (purple)
+        { name: 'MMN Movies', url: 'https://karwan.tv/mmn-movies', method: 'external', color: 'purple', subgroup: 'movie' },
+        { name: 'Soran Entertainment TV', url: 'https://karwan.tv/soran-entertainment-tv', method: 'external', color: 'purple', subgroup: 'movie' },
+        { name: 'Bnar Movies', url: 'https://karwan.tv/bnar-movies', method: 'external', color: 'purple', subgroup: 'movie' },
+        { name: 'Bnar TV', url: 'https://karwan.tv/bnar-tv', method: 'external', color: 'purple', subgroup: 'movie' },
+        { name: 'Befrin TV', url: 'https://karwan.tv/befrin-tv', method: 'external', color: 'purple', subgroup: 'movie' },
+        { name: 'Jamawar TV', url: 'https://karwan.tv/jamawar-tv', method: 'external', color: 'purple', subgroup: 'movie' },
+        { name: 'Barin Movies', url: 'https://karwan.tv/barin-movies', method: 'external', color: 'purple', subgroup: 'movie' },
+        { name: 'Astera Movies', url: 'https://karwan.tv/astera-movies', method: 'external', color: 'purple', subgroup: 'movie' },
+        { name: 'Derwaze TV', url: 'https://karwan.tv/derwaze-tv', method: 'external', color: 'purple', subgroup: 'movie' },
+        { name: 'Bnar Action', url: 'https://karwan.tv/bnar-action', method: 'external', color: 'purple', subgroup: 'movie' },
+        
+        // Dubbad (pink)
+        { name: 'MMN Drama', url: 'https://karwan.tv/mmn-drama', method: 'external', color: 'pink', subgroup: 'dubbad' },
+        { name: 'MMN Show', url: 'https://karwan.tv/mmn-show', method: 'external', color: 'pink', subgroup: 'dubbad' },
+        { name: 'Astera Show', url: 'https://karwan.tv/astera-show', method: 'external', color: 'pink', subgroup: 'dubbad' },
+        { name: 'Infinity TV', url: 'https://karwan.tv/infinity-tv', method: 'external', color: 'pink', subgroup: 'dubbad' },
+        { name: 'Astera Family', url: 'https://karwan.tv/astera-family', method: 'external', color: 'pink', subgroup: 'dubbad' },
+        { name: 'Barin Family', url: 'https://karwan.tv/barin-family', method: 'external', color: 'pink', subgroup: 'dubbad' },
+        { name: 'Srusht TV', url: 'https://karwan.tv/srusht-tv', method: 'external', color: 'pink', subgroup: 'dubbad' },
+        { name: 'Avar TV', url: 'https://karwan.tv/avar-tv', method: 'external', color: 'pink', subgroup: 'dubbad' },
+        { name: 'Halabja TV', url: 'https://karwan.tv/halabja-tv', method: 'external', color: 'pink', subgroup: 'dubbad' },
+        { name: 'Rozh TV', url: 'https://karwan.tv/rozh-tv', method: 'external', color: 'pink', subgroup: 'dubbad' },
+        { name: 'Speda Drama', url: 'https://karwan.tv/speda-drama', method: 'external', color: 'pink', subgroup: 'dubbad' },
+        { name: 'Delal TV', url: 'https://karwan.tv/delal-tv', method: 'external', color: 'pink', subgroup: 'dubbad' },
+        { name: 'Kurdmax TV', url: 'https://karwan.tv/kurdmax-tv', method: 'external', color: 'pink', subgroup: 'dubbad' },
+        { name: 'Zaxo TV', url: 'https://karwan.tv/zaxo-tv', method: 'external', color: 'pink', subgroup: 'dubbad' },
+        { name: 'Kurdmax Show TV', url: 'https://karwan.tv/kurdmax-show-tv', method: 'external', color: 'pink', subgroup: 'dubbad' },
+        { name: 'Mix TV', url: 'https://karwan.tv/mix-tv', method: 'external', color: 'pink', subgroup: 'dubbad' },
+        
+        // Blandad (grey)
+        { name: 'Karwan Duhok TV', url: 'https://karwan.tv/duhok-tv', method: 'external', color: 'grey', subgroup: 'blandad' },
+        { name: 'Cihan TV', url: 'https://karwan.tv/cihan-tv', method: 'external', color: 'grey', subgroup: 'blandad' },
+        { name: 'Khak TV', url: 'https://karwan.tv/khak-tv', method: 'external', color: 'grey', subgroup: 'blandad' },
+        { name: 'Zed TV Plus', url: 'https://karwan.tv/zed-tv-plus', method: 'external', color: 'grey', subgroup: 'blandad' },
+        { name: 'Karwan Slemani TV', url: 'https://karwan.tv/slemani-tv', method: 'external', color: 'grey', subgroup: 'blandad' },
+        
+        // Music (yellow)
+        { name: 'Sima TV', url: 'https://karwan.tv/sima-tv', method: 'external', color: 'yellow', subgroup: 'music' },
+        { name: 'Shna TV', url: 'https://karwan.tv/shna-tv', method: 'external', color: 'yellow', subgroup: 'music' },
+        { name: 'Kurd 7', url: 'https://karwan.tv/kurd-7', method: 'external', color: 'yellow', subgroup: 'music' },
+        { name: 'Kurdmax Music', url: 'https://karwan.tv/kurdmax-music', method: 'external', color: 'yellow', subgroup: 'music' },
+        { name: 'MMN Documentary', url: 'https://karwan.tv/mmn-clip', method: 'external', color: 'yellow', subgroup: 'music' },
+        { name: 'Astera Culture', url: 'https://karwan.tv/astera-culture', method: 'external', color: 'yellow', subgroup: 'music' },
+        { name: 'Derin TV', url: 'https://karwan.tv/derin-tv', method: 'external', color: 'yellow', subgroup: 'music' },
+        { name: 'Reng TV', url: 'https://karwan.tv/reng-tv', method: 'external', color: 'yellow', subgroup: 'music' },
+        { name: 'Euro Kurd TV', url: 'https://karwan.tv/euro-kurd-tv', method: 'external', color: 'yellow', subgroup: 'music' },
+        { name: 'Kurdana TV', url: 'https://karwan.tv/kurdana-tv', method: 'external', color: 'yellow', subgroup: 'music' },
+        { name: 'Azadi TV', url: 'https://karwan.tv/azadi-tv', method: 'external', color: 'yellow', subgroup: 'music' },
+        { name: 'Kanal 21', url: 'https://karwan.tv/kanali-21', method: 'external', color: 'yellow', subgroup: 'music' },
+        
+        // Dokumentär (maroon)
+        { name: 'MMN Documentary', url: 'https://karwan.tv/mmn-documentary', method: 'external', color: 'maroon', subgroup: 'dokumentar' },
+        { name: 'Astera Documentary', url: 'https://karwan.tv/astera-documentary', method: 'external', color: 'maroon', subgroup: 'dokumentar' },
+        { name: 'Reng Documentary', url: 'https://karwan.tv/reng-documentary', method: 'external', color: 'maroon', subgroup: 'dokumentar' },
+        { name: 'Zed TV', url: 'https://karwan.tv/zed-tv', method: 'external', color: 'maroon', subgroup: 'dokumentar' },
+        
+        // Dini (green)
+        { name: 'NRT 4', url: 'https://karwan.tv/nrt-4', method: 'external', color: 'green', subgroup: 'dini' },
+        { name: 'Mihrab TV', url: 'https://karwan.tv/mihrab-tv', method: 'external', color: 'green', subgroup: 'dini' },
+        { name: 'UTV Duhok', url: 'https://karwan.tv/utv-duhok', method: 'external', color: 'green', subgroup: 'dini' },
+        { name: 'UTV Hawler', url: 'https://karwan.tv/utv-hawler', method: 'external', color: 'green', subgroup: 'dini' },
+        { name: 'Shar TV', url: 'https://karwan.tv/shar-tv', method: 'external', color: 'green', subgroup: 'dini' },
+        { name: 'Farmoda TV', url: 'https://karwan.tv/farmoda-tv', method: 'external', color: 'green', subgroup: 'dini' },
+        { name: 'Ranya TV', url: 'https://karwan.tv/ranya-tv', method: 'external', color: 'green', subgroup: 'dini' },
+        { name: 'Aro Family', url: 'https://karwan.tv/aro-family', method: 'external', color: 'green', subgroup: 'dini' },
+        
+        // Kultur (brown)
+        { name: 'Dever TV', url: 'https://karwan.tv/dever-tv', method: 'external', color: 'brown', subgroup: 'kultur' },
+        { name: 'Rasan TV', url: 'https://karwan.tv/rasan-tv', method: 'external', color: 'brown', subgroup: 'kultur' },
+        
+        // Srodi Dini (magenta)
+        { name: 'Dimen TV', url: 'https://karwan.tv/dimen-tv', method: 'external', color: 'magenta', subgroup: 'srodi-dini' },
+        { name: 'Bangxwazen Badinan TV', url: 'https://karwan.tv/bangxwazen-badinan-tv', method: 'external', color: 'magenta', subgroup: 'srodi-dini' },
+        { name: 'Esra TV', url: 'https://karwan.tv/esra-tv', method: 'external', color: 'magenta', subgroup: 'srodi-dini' },
+        
+        // Nyhet (beige)
+        { name: 'Kurd Channel', url: 'https://karwan.tv/kurd-channel', method: 'external', color: 'beige', subgroup: 'nyhet' },
+        { name: 'Cira TV', url: 'https://karwan.tv/cira-tv', method: 'external', color: 'beige', subgroup: 'nyhet' },
+        { name: 'Karwan Nalia TV', url: 'https://karwan.tv/nalia-tv', method: 'external', color: 'beige', subgroup: 'nyhet' },
+        { name: 'Rojhelat TV', url: 'https://karwan.tv/rojhelat-tv', method: 'external', color: 'beige', subgroup: 'nyhet' },
+        { name: 'Speda TV', url: 'https://karwan.tv/speda-tv', method: 'external', color: 'beige', subgroup: 'nyhet' },
+        { name: 'Kirkuk TV', url: 'https://karwan.tv/kirkuk-tv', method: 'external', color: 'beige', subgroup: 'nyhet' }
       ],
       websites: [
         { name: 'IMVBox', url: 'https://www.imvbox.com/en', method: 'external', color: 'orange' },
@@ -572,14 +651,49 @@
     let currentChannel = { name: 'TV1', url: 'https://m.telewebion.com/embed/live/tv1?autoplay=1&mute=0', method: 'iframe' };
     let favorites = JSON.parse(localStorage.getItem('favorites') || '[]');
     let currentFilter = null;
+    let currentKarwanSubgroup = 'all';
 
-    function renderChannels(filter = null) {
+    function renderChannels(filter = null, karwanSubgroup = 'all') {
       const container = document.getElementById('channels-container');
       let html = '';
       currentFilter = filter;
+      currentKarwanSubgroup = karwanSubgroup;
 
       Object.keys(channels).forEach(category => {
         if (filter && filter !== category) return;
+        
+        if (category === 'karwan' && karwanSubgroup !== 'all') {
+          const filteredChannels = channels[category].filter(ch => ch.subgroup === karwanSubgroup);
+          if (filteredChannels.length === 0) return;
+          
+          const subgroupNames = {
+            'kids': 'Kids',
+            'movie': 'Movie',
+            'dubbad': 'Dubbad',
+            'blandad': 'Blandad',
+            'music': 'Music',
+            'dokumentar': 'Dokumentär',
+            'dini': 'Dini',
+            'kultur': 'Kultur',
+            'srodi-dini': 'Srodi Dini',
+            'nyhet': 'Nyhet'
+          };
+          
+          html += `<div class="category-title">Karwan TV - ${subgroupNames[karwanSubgroup]}</div>`;
+          
+          filteredChannels.forEach(ch => {
+            const isFav = favorites.some(f => f.name === ch.name);
+            html += `
+              <div class="channel-item ${ch.color}" onclick="loadChannel('${ch.url.replace(/'/g, "\\'")}', '${ch.name.replace(/'/g, "\\'")}', '${ch.method || 'hls'}')">
+                <span>${ch.name}</span>
+                <button class="favorite-btn" onclick="event.stopPropagation(); toggleFavorite('${ch.name.replace(/'/g, "\\'")}', '${ch.url.replace(/'/g, "\\'")}', '${ch.method || 'hls'}')">
+                  ${isFav ? '⭐' : '☆'}
+                </button>
+              </div>
+            `;
+          });
+          return;
+        }
         
         const categoryNames = {
           national: 'Nationella Kanaler',
@@ -606,6 +720,7 @@
 
       container.innerHTML = html;
       updateActiveChannel();
+      updateDropdownActiveState(karwanSubgroup);
     }
 
     function updateActiveChannel() {
@@ -619,6 +734,36 @@
       });
     }
 
+    function updateDropdownActiveState(subgroup) {
+      document.querySelectorAll('.dropdown-item').forEach(item => {
+        item.classList.remove('active');
+        
+        if (subgroup === 'all' && item.textContent === 'Alla Karwan kanaler') {
+          item.classList.add('active');
+        } else if (subgroup === 'blue' && item.textContent === 'Kids') {
+          item.classList.add('active');
+        } else if (subgroup === 'purple' && item.textContent === 'Movie') {
+          item.classList.add('active');
+        } else if (subgroup === 'pink' && item.textContent === 'Dubbad') {
+          item.classList.add('active');
+        } else if (subgroup === 'grey' && item.textContent === 'Blandad') {
+          item.classList.add('active');
+        } else if (subgroup === 'yellow' && item.textContent === 'Music') {
+          item.classList.add('active');
+        } else if (subgroup === 'maroon' && item.textContent === 'Dokumentär') {
+          item.classList.add('active');
+        } else if (subgroup === 'green' && item.textContent === 'Dini') {
+          item.classList.add('active');
+        } else if (subgroup === 'brown' && item.textContent === 'Kultur') {
+          item.classList.add('active');
+        } else if (subgroup === 'magenta' && item.textContent === 'Srodi Dini') {
+          item.classList.add('active');
+        } else if (subgroup === 'beige' && item.textContent === 'Nyhet') {
+          item.classList.add('active');
+        }
+      });
+    }
+
     function toggleFavorite(name, url, method) {
       const index = favorites.findIndex(f => f.name === name);
       if (index > -1) {
@@ -627,19 +772,63 @@
         favorites.push({ name, url, method });
       }
       localStorage.setItem('favorites', JSON.stringify(favorites));
-      renderChannels(currentFilter);
+      renderChannels(currentFilter, currentKarwanSubgroup);
     }
 
     function showAllChannels() {
       document.querySelectorAll('.nav-btn').forEach(btn => btn.classList.remove('active'));
       document.querySelector('.nav-btn:first-child').classList.add('active');
+      closeKarwanDropdown();
       renderChannels();
     }
 
     function filterCategory(category) {
       document.querySelectorAll('.nav-btn').forEach(btn => btn.classList.remove('active'));
       event.target.classList.add('active');
+      closeKarwanDropdown();
       renderChannels(category);
+    }
+
+    function filterKarwanCategory(subgroup) {
+      document.querySelectorAll('.nav-btn').forEach(btn => btn.classList.remove('active'));
+      document.getElementById('karwan-btn').classList.add('active');
+      closeKarwanDropdown();
+      renderChannels('karwan', subgroup);
+    }
+
+    function toggleKarwanDropdown() {
+      const dropdown = document.getElementById('karwan-dropdown');
+      const isOpen = dropdown.classList.contains('show');
+      
+      // Close other dropdowns if open
+      closeKarwanDropdown();
+      
+      if (!isOpen) {
+        dropdown.classList.add('show');
+        
+        // Mark active item in dropdown
+        updateDropdownActiveState(currentKarwanSubgroup);
+        
+        // Close dropdown when clicking outside
+        setTimeout(() => {
+          document.addEventListener('click', closeKarwanDropdownOnClick);
+        }, 10);
+      }
+    }
+
+    function closeKarwanDropdown() {
+      const dropdown = document.getElementById('karwan-dropdown');
+      dropdown.classList.remove('show');
+      document.removeEventListener('click', closeKarwanDropdownOnClick);
+    }
+
+    function closeKarwanDropdownOnClick(event) {
+      const dropdown = document.getElementById('karwan-dropdown');
+      const karwanBtn = document.getElementById('karwan-btn');
+      
+      if (!dropdown.contains(event.target) && !karwanBtn.contains(event.target)) {
+        closeKarwanDropdown();
+      }
     }
 
     function toggleChannelList() {
