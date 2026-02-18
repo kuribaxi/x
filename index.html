@@ -366,7 +366,7 @@
 <body>
   <div class="header">
     <h1>XOM TV</h1>
-    <p>Alla iranska TV-kanaler – fungerar perfekt (telewebion ersatt med namakade)</p>
+    <p>Alla iranska TV-kanaler – fungerar perfekt</p>
   </div>
 
   <div class="nav-buttons">
@@ -430,80 +430,67 @@
   </div>
 
   <script>
-    // Uppdaterad kanallista – alla telewebion-länkar är ersatta med namakade.com iframe
     const channels = {
       national: [
-        { name: 'TV1', url: 'https://namakade.com/livetv?zlreZe45otFHMwb8Ct12', method: 'iframe', color: 'green' },
-        { name: 'TV2', url: 'https://namakade.com/livetv?zlreZe45otFHMwb8Ct12', method: 'iframe', color: 'green' },
-        { name: 'TV3', url: 'https://namakade.com/livetv?zlreZe45otFHMwb8Ct12', method: 'iframe', color: 'green' },
-        { name: 'TV4', url: 'https://namakade.com/livetv?zlreZe45otFHMwb8Ct12', method: 'iframe', color: 'green' },
-        { name: 'Tehran', url: 'https://namakade.com/livetv?zlreZe45otFHMwb8Ct12', method: 'iframe', color: 'green' },
-        { name: 'Nasim', url: 'https://namakade.com/livetv?zlreZe45otFHMwb8Ct12', method: 'iframe', color: 'green' },
-        { name: 'Varzesh', url: 'https://namakade.com/livetv?zlreZe45otFHMwb8Ct12', method: 'iframe', color: 'green' },
-        { name: 'IRINN', url: 'https://namakade.com/livetv?zlreZe45otFHMwb8Ct12', method: 'iframe', color: 'green' },
-        { name: 'IRINN 2', url: 'https://namakade.com/livetv?zlreZe45otFHMwb8Ct12', method: 'iframe', color: 'green' },
-        { name: 'iFilm Farsi', url: 'https://namakade.com/livetv?zlreZe45otFHMwb8Ct12', method: 'iframe', color: 'green' },
-        { name: 'iFilm Farsi (HLS)', url: 'https://namakade.com/livetv?zlreZe45otFHMwb8Ct12', method: 'iframe', color: 'cyan' },
-        { name: 'iFilm Dari (HLS)', url: 'https://namakade.com/livetv?zlreZe45otFHMwb8Ct12', method: 'iframe', color: 'cyan' },
-        { name: 'iFilm English (HLS)', url: 'https://namakade.com/livetv?zlreZe45otFHMwb8Ct12', method: 'iframe', color: 'cyan' },
-        { name: 'iFilm Arabic (HLS)', url: 'https://namakade.com/livetv?zlreZe45otFHMwb8Ct12', method: 'iframe', color: 'cyan' },
-        { name: 'Omid', url: 'https://namakade.com/livetv?zlreZe45otFHMwb8Ct12', method: 'iframe', color: 'green' },
-        { name: 'Namayesh', url: 'https://namakade.com/livetv?zlreZe45otFHMwb8Ct12', method: 'iframe', color: 'green' },
-        { name: 'Mostanad', url: 'https://namakade.com/livetv?zlreZe45otFHMwb8Ct12', method: 'iframe', color: 'green' },
-        { name: 'Tamasha', url: 'https://namakade.com/livetv?zlreZe45otFHMwb8Ct12', method: 'iframe', color: 'green' },
-        { name: 'Amouzesh', url: 'https://namakade.com/livetv?zlreZe45otFHMwb8Ct12', method: 'iframe', color: 'green' },
-        { name: 'Salamat', url: 'https://namakade.com/livetv?zlreZe45otFHMwb8Ct12', method: 'iframe', color: 'green' },
-        { name: 'Ofogh', url: 'https://namakade.com/livetv?zlreZe45otFHMwb8Ct12', method: 'iframe', color: 'green' },
-        { name: 'Quran', url: 'https://namakade.com/livetv?zlreZe45otFHMwb8Ct12', method: 'iframe', color: 'green' },
-        { name: 'Pooya', url: 'https://namakade.com/livetv?zlreZe45otFHMwb8Ct12', method: 'iframe', color: 'green' },
-        { name: 'Javaneh', url: 'https://namakade.com/livetv?zlreZe45otFHMwb8Ct12', method: 'iframe', color: 'green' },
-        { name: 'Sepehr', url: 'https://namakade.com/livetv?zlreZe45otFHMwb8Ct12', method: 'iframe', color: 'green' },
-        { name: 'Nava', url: 'https://namakade.com/livetv?zlreZe45otFHMwb8Ct12', method: 'iframe', color: 'green' },
-        { name: 'Nama', url: 'https://namakade.com/livetv?zlreZe45otFHMwb8Ct12', method: 'iframe', color: 'green' },
-        { name: 'Ara', url: 'https://namakade.com/livetv?zlreZe45otFHMwb8Ct12', method: 'iframe', color: 'green' },
-        { name: 'Sepehr (sep)', url: 'https://namakade.com/livetv?zlreZe45otFHMwb8Ct12', method: 'iframe', color: 'green' },
-        { name: 'Shoma', url: 'https://namakade.com/livetv?zlreZe45otFHMwb8Ct12', method: 'iframe', color: 'green' },
-        { name: 'Jam Jam 1', url: 'https://namakade.com/livetv?zlreZe45otFHMwb8Ct12', method: 'iframe', color: 'green' },
-        { name: 'Jam Jam 2', url: 'https://namakade.com/livetv?zlreZe45otFHMwb8Ct12', method: 'iframe', color: 'green' },
-        { name: 'Jam Jam 3', url: 'https://namakade.com/livetv?zlreZe45otFHMwb8Ct12', method: 'iframe', color: 'green' },
-        { name: 'Parseh', url: 'https://namakade.com/livetv?zlreZe45otFHMwb8Ct12', method: 'iframe', color: 'green' },
-        { name: 'Nesfejahan', url: 'https://namakade.com/livetv?zlreZe45otFHMwb8Ct12', method: 'iframe', color: 'green' },
-        { name: 'Sarbedaran', url: 'https://namakade.com/livetv?zlreZe45otFHMwb8Ct12', method: 'iframe', color: 'green' },
+        { name: 'TV1', url: 'https://ncdn.telewebion.ir/tv1/live/playlist.m3u8', color: 'green' },
+        { name: 'TV2', url: 'https://ncdn.telewebion.ir/tv2/live/playlist.m3u8', color: 'green' },
+        { name: 'TV3', url: 'https://ncdn.telewebion.ir/tv3/live/playlist.m3u8', color: 'green' },
+        { name: 'TV4', url: 'https://ncdn.telewebion.ir/tv4/live/playlist.m3u8', color: 'green' },
+        { name: 'Tehran', url: 'https://ncdn.telewebion.ir/tehran/live/playlist.m3u8', color: 'green' },
+        { name: 'Nasim', url: 'https://ncdn.telewebion.ir/nasim/live/playlist.m3u8', color: 'green' },
+        { name: 'Varzesh', url: 'https://ncdn.telewebion.ir/varzesh/live/playlist.m3u8', color: 'green' },
+        { name: 'IRINN', url: 'https://ncdn.telewebion.ir/irinn/live/playlist.m3u8', color: 'green' },
+        { name: 'IRINN 2', url: 'https://ncdn.telewebion.ir/irinn2/live/playlist.m3u8', color: 'green' },
+        { name: 'iFilm Farsi', url: 'https://ncdn.telewebion.ir/ifilm/live/playlist.m3u8', color: 'green' },
+        { name: 'Omid', url: 'https://ncdn.telewebion.ir/omid/live/playlist.m3u8', color: 'green' },
+        { name: 'Namayesh', url: 'https://ncdn.telewebion.ir/namayesh/live/playlist.m3u8', color: 'green' },
+        { name: 'Mostanad', url: 'https://ncdn.telewebion.ir/mostanad/live/playlist.m3u8', color: 'green' },
+        { name: 'Tamasha', url: 'https://ncdn.telewebion.ir/tamasha/live/playlist.m3u8', color: 'green' },
+        { name: 'Amouzesh', url: 'https://ncdn.telewebion.ir/amouzesh/live/playlist.m3u8', color: 'green' },
+        { name: 'Salamat', url: 'https://ncdn.telewebion.ir/salamat/live/playlist.m3u8', color: 'green' },
+        { name: 'Ofogh', url: 'https://ncdn.telewebion.ir/ofogh/live/playlist.m3u8', color: 'green' },
+        { name: 'Quran', url: 'https://ncdn.telewebion.ir/quran/live/playlist.m3u8', color: 'green' },
+        { name: 'Pooya', url: 'https://ncdn.telewebion.ir/pooya/live/playlist.m3u8', color: 'green' },
+        { name: 'Javaneh', url: 'https://ncdn.telewebion.ir/javaneh/live/playlist.m3u8', color: 'green' },
+        { name: 'Sepehr', url: 'https://ncdn.telewebion.ir/sepehr/live/playlist.m3u8', color: 'green' },
+        { name: 'Faratar', url: 'https://ncdn.telewebion.ir/faratar/live/playlist.m3u8', color: 'green' },
+        { name: 'Nava', url: 'https://ncdn.telewebion.ir/nava/live/playlist.m3u8', color: 'green' },
+        { name: 'Nama', url: 'https://ncdn.telewebion.ir/nama/live/playlist.m3u8', color: 'green' },
       ],
       regional: [
-        { name: 'MAHABAD', url: 'https://namakade.com/livetv?zlreZe45otFHMwb8Ct12', method: 'iframe', color: 'green' },
-        { name: 'KORDESTAN', url: 'https://namakade.com/livetv?zlreZe45otFHMwb8Ct12', method: 'iframe', color: 'green' },
-        { name: 'KERMANSHAH', url: 'https://namakade.com/livetv?zlreZe45otFHMwb8Ct12', method: 'iframe', color: 'green' },
-        { name: 'ILAM', url: 'https://namakade.com/livetv?zlreZe45otFHMwb8Ct12', method: 'iframe', color: 'green' },
-        { name: 'BOOSHEHR', url: 'https://namakade.com/livetv?zlreZe45otFHMwb8Ct12', method: 'iframe', color: 'green' },
-        { name: 'ABADAN', url: 'https://namakade.com/livetv?zlreZe45otFHMwb8Ct12', method: 'iframe', color: 'green' },
-        { name: 'BANDARABBAS', url: 'https://namakade.com/livetv?zlreZe45otFHMwb8Ct12', method: 'iframe', color: 'green' },
-        { name: 'AHVAZ', url: 'https://namakade.com/livetv?zlreZe45otFHMwb8Ct12', method: 'iframe', color: 'green' },
-        { name: 'KISH', url: 'https://namakade.com/livetv?zlreZe45otFHMwb8Ct12', method: 'iframe', color: 'green' },
-        { name: 'ZAHEDAN', url: 'https://namakade.com/livetv?zlreZe45otFHMwb8Ct12', method: 'iframe', color: 'green' },
-        { name: 'ALBORZ', url: 'https://namakade.com/livetv?zlreZe45otFHMwb8Ct12', method: 'iframe', color: 'green' },
-        { name: 'ARAK', url: 'https://namakade.com/livetv?zlreZe45otFHMwb8Ct12', method: 'iframe', color: 'green' },
-        { name: 'SEMNAN', url: 'https://namakade.com/livetv?zlreZe45otFHMwb8Ct12', method: 'iframe', color: 'green' },
-        { name: 'QOM', url: 'https://namakade.com/livetv?zlreZe45otFHMwb8Ct12', method: 'iframe', color: 'green' },
-        { name: 'QAZVIN', url: 'https://namakade.com/livetv?zlreZe45otFHMwb8Ct12', method: 'iframe', color: 'green' },
-        { name: '4Mahalebakhtiari', url: 'https://namakade.com/livetv?zlreZe45otFHMwb8Ct12', method: 'iframe', color: 'green' },
-        { name: 'HAMADAN', url: 'https://namakade.com/livetv?zlreZe45otFHMwb8Ct12', method: 'iframe', color: 'green' },
-        { name: 'LORESTAN', url: 'https://namakade.com/livetv?zlreZe45otFHMwb8Ct12', method: 'iframe', color: 'green' },
-        { name: 'KERMAN', url: 'https://namakade.com/livetv?zlreZe45otFHMwb8Ct12', method: 'iframe', color: 'green' },
-        { name: 'ESFEHAN', url: 'https://namakade.com/livetv?zlreZe45otFHMwb8Ct12', method: 'iframe', color: 'green' },
-        { name: 'FARS', url: 'https://namakade.com/livetv?zlreZe45otFHMwb8Ct12', method: 'iframe', color: 'green' },
-        { name: 'YAZD', url: 'https://namakade.com/livetv?zlreZe45otFHMwb8Ct12', method: 'iframe', color: 'green' },
-        { name: 'YASOOJ', url: 'https://namakade.com/livetv?zlreZe45otFHMwb8Ct12', method: 'iframe', color: 'green' },
-        { name: 'KH.JONOBI', url: 'https://namakade.com/livetv?zlreZe45otFHMwb8Ct12', method: 'iframe', color: 'green' },
-        { name: 'KH.SHOMALI', url: 'https://namakade.com/livetv?zlreZe45otFHMwb8Ct12', method: 'iframe', color: 'green' },
-        { name: 'KH.RAZAVI', url: 'https://namakade.com/livetv?zlreZe45otFHMwb8Ct12', method: 'iframe', color: 'green' },
-        { name: 'GORGAN', url: 'https://namakade.com/livetv?zlreZe45otFHMwb8Ct12', method: 'iframe', color: 'green' },
-        { name: 'MAZANDARAN', url: 'https://namakade.com/livetv?zlreZe45otFHMwb8Ct12', method: 'iframe', color: 'green' },
-        { name: 'GILAN', url: 'https://namakade.com/livetv?zlreZe45otFHMwb8Ct12', method: 'iframe', color: 'green' },
-        { name: 'ARDABIL', url: 'https://namakade.com/livetv?zlreZe45otFHMwb8Ct12', method: 'iframe', color: 'green' },
-        { name: 'TABRIZ', url: 'https://namakade.com/livetv?zlreZe45otFHMwb8Ct12', method: 'iframe', color: 'green' },
-        { name: 'URMIA', url: 'https://namakade.com/livetv?zlreZe45otFHMwb8Ct12', method: 'iframe', color: 'green' },
-        { name: 'ZANJAN', url: 'https://namakade.com/livetv?zlreZe45otFHMwb8Ct12', method: 'iframe', color: 'green' },
+        { name: 'MAHABAD', url: 'https://sepehrtv.ir/live/mahabad', color: 'cyan', method: 'iframe' },
+        { name: 'KORDESTAN', url: 'https://sepehrtv.ir/live/kordestan', color: 'cyan', method: 'iframe' },
+        { name: 'KERMANSHAH', url: 'https://sepehrtv.ir/live/zagros', color: 'cyan', method: 'iframe' },
+        { name: 'ILAM', url: 'https://sepehrtv.ir/live/ilam', color: 'cyan', method: 'iframe' },
+        { name: 'BOOSHEHR', url: 'https://sepehrtv.ir/live/bushehr', color: 'cyan', method: 'iframe' },
+        { name: 'ABADAN', url: 'https://sepehrtv.ir/live/abadan', color: 'cyan', method: 'iframe' },
+        { name: 'BANDARABBAS', url: 'https://sepehrtv.ir/live/khalijefars', color: 'cyan', method: 'iframe' },
+        { name: 'AHVAZ', url: 'https://sepehrtv.ir/live/khoozestan', color: 'cyan', method: 'iframe' },
+        { name: 'KISH', url: 'https://sepehrtv.ir/live/kish', color: 'cyan', method: 'iframe' },
+        { name: 'ZAHEDAN', url: 'https://sepehrtv.ir/live/hamoon', color: 'cyan', method: 'iframe' },
+        { name: 'ALBORZ', url: 'https://sepehrtv.ir/live/alborz', color: 'cyan', method: 'iframe' },
+        { name: 'ARAK', url: 'https://sepehrtv.ir/live/aftab', color: 'cyan', method: 'iframe' },
+        { name: 'SEMNAN', url: 'https://sepehrtv.ir/live/semnan', color: 'cyan', method: 'iframe' },
+        { name: 'QOM', url: 'https://sepehrtv.ir/live/noor', color: 'cyan', method: 'iframe' },
+        { name: 'QAZVIN', url: 'https://sepehrtv.ir/live/qazvin', color: 'cyan', method: 'iframe' },
+        { name: '4Mahalebakhtiari', url: 'https://sepehrtv.ir/live/jahanbin', color: 'cyan', method: 'iframe' },
+        { name: 'HAMADAN', url: 'https://sepehrtv.ir/live/sina', color: 'cyan', method: 'iframe' },
+        { name: 'LORESTAN', url: 'https://sepehrtv.ir/live/aflak', color: 'cyan', method: 'iframe' },
+        { name: 'KERMAN', url: 'https://sepehrtv.ir/live/kerman', color: 'cyan', method: 'iframe' },
+        { name: 'ESFEHAN', url: 'https://sepehrtv.ir/live/esfahan', color: 'cyan', method: 'iframe' },
+        { name: 'FARS', url: 'https://sepehrtv.ir/live/fars', color: 'cyan', method: 'iframe' },
+        { name: 'YAZD', url: 'https://sepehrtv.ir/live/taban', color: 'cyan', method: 'iframe' },
+        { name: 'YASOOJ', url: 'https://sepehrtv.ir/live/dena', color: 'cyan', method: 'iframe' },
+        { name: 'KH.JONOBI', url: 'https://sepehrtv.ir/live/khavaran', color: 'cyan', method: 'iframe' },
+        { name: 'KH.SHOMALI', url: 'https://sepehrtv.ir/live/atrak', color: 'cyan', method: 'iframe' },
+        { name: 'KH.RAZAVI', url: 'https://sepehrtv.ir/live/khorasanrazavi', color: 'cyan', method: 'iframe' },
+        { name: 'GORGAN', url: 'https://sepehrtv.ir/live/sabz', color: 'cyan', method: 'iframe' },
+        { name: 'MAZANDARAN', url: 'https://sepehrtv.ir/live/tabarestan', color: 'cyan', method: 'iframe' },
+        { name: 'GILAN', url: 'https://sepehrtv.ir/live/baran', color: 'cyan', method: 'iframe' },
+        { name: 'ARDABIL', url: 'https://sepehrtv.ir/live/sabalan', color: 'cyan', method: 'iframe' },
+        { name: 'TABRIZ', url: 'https://sepehrtv.ir/live/sahand', color: 'cyan', method: 'iframe' },
+        { name: 'URMIA', url: 'https://sepehrtv.ir/live/azarbayjangharbi', color: 'cyan', method: 'iframe' },
+        { name: 'ZANJAN', url: 'https://sepehrtv.ir/live/eshragh', color: 'cyan', method: 'iframe' },
       ],
       kurdish: [
         { name: 'Zagros (HLS)', url: 'https://5a3ed7a72ed4b.streamlock.net/zagrostv/SMIL:myStream.smil/playlist.m3u8', color: 'green' },
@@ -645,7 +632,7 @@
     };
 
     let hls;
-    let currentChannel = { name: 'TV1', url: 'https://namakade.com/livetv?zlreZe45otFHMwb8Ct12', method: 'iframe' };
+    let currentChannel = { name: 'TV1', url: 'https://ncdn.telewebion.ir/tv1/live/playlist.m3u8', method: 'hls' };
     let favorites = JSON.parse(localStorage.getItem('favorites') || '[]');
     let currentFilter = null;
     let currentKarwanSubgroup = 'all';
@@ -703,8 +690,8 @@
       } else if (filter) {
         // Regular category filtering
         const categoryNames = {
-          national: 'Nationella Kanaler (via namakade)',
-          regional: 'Regionala Kanaler (via namakade)',
+          national: 'Nationella Kanaler',
+          regional: 'Regionala Kanaler',
           kurdish: 'Kurdiska Kanaler',
           websites: 'Webbplatser'
         };
@@ -730,8 +717,8 @@
           if (category === 'karwan' && currentKarwanSubgroup !== 'all') return;
           
           const categoryNames = {
-            national: 'Nationella Kanaler (via namakade)',
-            regional: 'Regionala Kanaler (via namakade)',
+            national: 'Nationella Kanaler',
+            regional: 'Regionala Kanaler',
             kurdish: 'Kurdiska Kanaler',
             karwan: 'Karwan TV',
             websites: 'Webbplatser'
@@ -879,20 +866,6 @@
       list.classList.toggle('show');
     }
 
-    function createProxyLoader() {
-      const proxy = 'https://corsproxy.io/?';
-      const DefaultLoader = Hls.DefaultConfig.loader;
-      return class ProxyLoader extends DefaultLoader {
-        constructor(config) { super(config); }
-        load(context, config, callbacks) {
-          if (context.url && context.url.includes('telewebion') && !context.url.startsWith(proxy)) {
-            context.url = proxy + encodeURIComponent(context.url);
-          }
-          super.load(context, config, callbacks);
-        }
-      };
-    }
-
     function loadChannel(url, name, method = 'hls') {
       if (window.innerWidth <= 768) {
         document.getElementById('channel-list').classList.remove('show');
@@ -924,17 +897,21 @@
 
       if (url.includes('.m3u8')) {
         if (Hls.isSupported()) {
-          const isTelewebion = url.includes('telewebion') || url.includes('lenz.splus.ir');
-          // For telewebion: route through CORS proxy so browser CORS restrictions are bypassed
-          const proxyUrl = isTelewebion
-            ? 'https://corsproxy.io/?' + encodeURIComponent(url)
-            : url;
+          const isTelewebion = url.includes('telewebion');
           hls = new Hls({
             debug: false,
             enableWorker: true,
             lowLatencyMode: false,
-            // For telewebion segment URLs also need proxy
-            loader: isTelewebion ? createProxyLoader() : Hls.DefaultConfig.loader,
+            xhrSetup: function(xhr, reqUrl) {
+              const ua = document.getElementById('ua-select').value;
+              if (ua) {
+                try { xhr.setRequestHeader('User-Agent', ua); } catch(e) {}
+              }
+              if (isTelewebion) {
+                try { xhr.setRequestHeader('Referer', 'https://telewebion.ir/'); } catch(e) {}
+                try { xhr.setRequestHeader('Origin', 'https://telewebion.ir'); } catch(e) {}
+              }
+            }
           });
           
           hls.on(Hls.Events.MANIFEST_PARSED, () => {
@@ -953,7 +930,7 @@
             }
           });
           
-          hls.loadSource(isTelewebion ? proxyUrl : url);
+          hls.loadSource(url);
           hls.attachMedia(video);
         } else if (video.canPlayType('application/vnd.apple.mpegurl')) {
           video.src = url;
