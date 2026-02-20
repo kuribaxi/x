@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html lang="sv">
 <head>
@@ -6,7 +7,6 @@
   <title>XOM TV - Alla iranska TV-kanaler</title>
   <script src="https://cdn.jsdelivr.net/npm/hls.js@latest"></script>
   <style>
-    /* ——— (Samma CSS som tidigare, ingen ändring) ——— */
     * {
       margin: 0;
       padding: 0;
@@ -226,7 +226,7 @@
     video, iframe {
       width: 100%;
       height: 100%;
-      object-fit: cover;
+      object-fit: cover; /* Fyller hela ytan, beskär eventuellt i kanterna */
       border: none;
     }
 
@@ -433,49 +433,214 @@
   <script>
     const channels = {
       national: [
-        // Uppdaterade enligt dina önskemål
-        { name: 'TV1', url: 'https://lenz.splus.ir/PLTV/88888888/224/3221226637/1.m3u8', color: 'green' },
-        { name: 'TV2', url: 'https://live-azd1104.telewebion.ir/ek/tv2/live/1080p/index.m3u8', color: 'green' },
-        { name: 'TV3', url: 'https://lenz.splus.ir/PLTV/88888888/224/3221226868/3.m3u8', color: 'green' },
-        { name: 'TV4', url: 'https://lenz.splus.ir/PLTV/88888888/224/3221226140/2.m3u8', color: 'green' },
-        { name: 'Tehran', url: 'https://lenz.splus.ir/PLTV/88888888/224/3221226141/2.m3u8', color: 'green' }, 
-        { name: 'Nasim', url: 'https://lenz.splus.ir/PLTV/88888888/224/3221226653/index.m3u8', color: 'green' },
-        { name: 'Varzesh', url: 'https://lenz.splus.ir/PLTV/88888888/224/3221226845/3.m3u8', color: 'green' },
-        { name: 'IRINN', url: 'https://lenz.splus.ir/PLTV/88888888/224/3221226142/2.m3u8', color: 'green' },
-        { name: 'IRINN 2', url: 'https://ncdn.telewebion.ir/irinn2/live/playlist.m3u8', color: 'green' },
-        { name: 'Press TV', url: 'https://lenz.splus.ir/PLTV/88888888/224/3221226156/2.m3u8', color: 'green' },
-        { name: 'Al.ALAM', url: 'https://lenz.splus.ir/PLTV/88888888/224/3221226157/2.m3u8', color: 'green' },
-        { name: 'Al.Kothar', url: 'https://lenz.splus.ir/PLTV/88888888/224/3221226158/2.m3u8', color: 'green' },
-        { name: 'iFilm Farsi', url: 'https://ncdn.telewebion.ir/ifilm/live/playlist.m3u8', color: 'green' },
-        { name: 'iFilm Farsi (Presstv)', url: 'https://live.presstv.ir/hls/ifilmfa_4_482/index.m3u8', color: 'green' },
-        { name: 'iFilm Dari', url: 'https://live.presstv.ir/hls/ifilm2.m3u8', color: 'green' },
-        { name: 'iFilm English', url: 'https://live.presstv.ir/hls/ifilmen.m3u8', color: 'green' },
-        { name: 'iFilm Arabic', url: 'https://live.presstv.ir/hls/ifilmar.m3u8', color: 'green' },
-        { name: 'Omid', url: 'https://lenz.splus.ir/PLTV/88888888/224/3221226159/2.m3u8', color: 'green' },
-        { name: 'Namayesh', url: 'https://lenz.splus.ir/PLTV/88888888/224/3221226148/2.m3u8', color: 'green' },
-        { name: 'Mostanad', url: 'https://lenz.splus.ir/PLTV/88888888/224/3221226901/index.m3u8', color: 'green' },
-        { name: 'Tamasha', url: 'https://lenz.splus.ir/PLTV/88888888/224/3221226879/2.m3u8', color: 'green' },
-        { name: 'Amouzesh', url: 'https://lenz.splus.ir/PLTV/88888888/224/3221226151/2.m3u8', color: 'green' },
-        { name: 'Salamat', url: 'https://lenz.splus.ir/PLTV/88888888/224/3221226152/2.m3u8', color: 'green' },
-        { name: 'Ofogh', url: 'https://lenz.splus.ir/PLTV/88888888/224/3221226143/2.m3u8', color: 'green' },
-        { name: 'Quran', url: 'https://lenz.splus.ir/PLTV/88888888/224/3221226144/2.m3u8', color: 'green' },
-        { name: 'Pooya', url: 'https://lenz.splus.ir/PLTV/88888888/224/3221226145/2.m3u8', color: 'green' },
-        { name: 'Javaneh', url: 'https://ncdn.telewebion.ir/javaneh/live/playlist.m3u8', color: 'green' },
-        { name: 'Sepehr', url: 'https://ncdn.telewebion.ir/sepehr/live/playlist.m3u8', color: 'green' },
-        { name: 'Faratar', url: 'https://ncdn.telewebion.ir/faratar/live/playlist.m3u8', color: 'green' },
-        { name: 'Nava', url: 'https://ncdn.telewebion.ir/nava/live/playlist.m3u8', color: 'green' },
-        { name: 'Nama', url: 'https://ncdn.telewebion.ir/nama/live/playlist.m3u8', color: 'green' },
+        { name: 'TV1', url: 'https://lenz.splus.ir/PLTV/88888888/224/3221226637/1.m3u8', color: 'green' }, 
+        { name: 'TV2', url: 'https://live-azd1104.telewebion.ir/ek/tv2/live/1080p/index.m3u8', color: 'green' }, 
+        { name: 'TV3', url: 'https://lenz.splus.ir/PLTV/88888888/224/3221226868/3.m3u8', color: 'green' }, 
+        { name: 'TV4', url: 'https://lenz.splus.ir/PLTV/88888888/224/3221226140/2.m3u8', color: 'green' }, 
+        { name: 'Tehran', url: 'https://lenz.splus.ir/PLTV/88888888/224/3221226141/2.m3u8', color: 'green' },  
+        { name: 'Nasim', url: 'https://lenz.splus.ir/PLTV/88888888/224/3221226653/index.m3u8', color: 'green' }, 
+        { name: 'Varzesh', url: 'https://lenz.splus.ir/PLTV/88888888/224/3221226845/3.m3u8', color: 'green' }, 
+        { name: 'IRINN', url: 'https://lenz.splus.ir/PLTV/88888888/224/3221226142/2.m3u8', color: 'green' }, 
+        { name: 'IRINN 2', url: 'https://ncdn.telewebion.ir/irinn2/live/playlist.m3u8', color: 'green' }, 
+        { name: 'Press TV', url: 'https://lenz.splus.ir/PLTV/88888888/224/3221226156/2.m3u8', color: 'green' }, 
+        { name: 'Al.ALAM', url: 'https://lenz.splus.ir/PLTV/88888888/224/3221226157/2.m3u8', color: 'green' }, 
+        { name: 'Al.Kothar', url: 'https://lenz.splus.ir/PLTV/88888888/224/3221226158/2.m3u8', color: 'green' }, 
+        { name: 'iFilm Farsi', url: 'https://ncdn.telewebion.ir/ifilm/live/playlist.m3u8', color: 'green' }, 
+        { name: 'iFilm Farsi (Presstv)', url: 'https://live.presstv.ir/hls/ifilmfa_4_482/index.m3u8', color: 'green' }, 
+        { name: 'iFilm Dari', url: 'https://live.presstv.ir/hls/ifilm2.m3u8', color: 'green' }, 
+        { name: 'iFilm English', url: 'https://live.presstv.ir/hls/ifilmen.m3u8', color: 'green' }, 
+        { name: 'iFilm Arabic', url: 'https://live.presstv.ir/hls/ifilmar.m3u8', color: 'green' }, 
+        { name: 'Omid', url: 'https://lenz.splus.ir/PLTV/88888888/224/3221226159/2.m3u8', color: 'green' }, 
+        { name: 'Namayesh', url: 'https://lenz.splus.ir/PLTV/88888888/224/3221226148/2.m3u8', color: 'green' }, 
+        { name: 'Mostanad', url: 'https://lenz.splus.ir/PLTV/88888888/224/3221226901/index.m3u8', color: 'green' }, 
+        { name: 'Tamasha', url: 'https://lenz.splus.ir/PLTV/88888888/224/3221226879/2.m3u8', color: 'green' }, 
+        { name: 'Amouzesh', url: 'https://lenz.splus.ir/PLTV/88888888/224/3221226151/2.m3u8', color: 'green' }, 
+        { name: 'Salamat', url: 'https://lenz.splus.ir/PLTV/88888888/224/3221226152/2.m3u8', color: 'green' }, 
+        { name: 'Ofogh', url: 'https://lenz.splus.ir/PLTV/88888888/224/3221226143/2.m3u8', color: 'green' }, 
+        { name: 'Quran', url: 'https://lenz.splus.ir/PLTV/88888888/224/3221226144/2.m3u8', color: 'green' }, 
+        { name: 'Pooya', url: 'https://lenz.splus.ir/PLTV/88888888/224/3221226145/2.m3u8', color: 'green' }, 
+        { name: 'Javaneh', url: 'https://ncdn.telewebion.ir/javaneh/live/playlist.m3u8', color: 'green' }, 
+        { name: 'Sepehr', url: 'https://ncdn.telewebion.ir/sepehr/live/playlist.m3u8', color: 'green' }, 
+        { name: 'Faratar', url: 'https://ncdn.telewebion.ir/faratar/live/playlist.m3u8', color: 'green' }, 
+        { name: 'Nava', url: 'https://ncdn.telewebion.ir/nava/live/playlist.m3u8', color: 'green' }, 
+        { name: 'Nama', url: 'https://ncdn.telewebion.ir/nama/live/playlist.m3u8', color: 'green' }, 
       ],
-      regional: [ /* Oförändrad */ ],
-      kurdish: [ /* Oförändrad */ ],
-      karwan: [ /* Oförändrad */ ],
-      websites: [ /* Oförändrad */ ]
+      regional: [
+        { name: 'MAHABAD', url: 'https://beta.sepehrtv.ir/live/15677', color: 'cyan', method: 'iframe' },
+        { name: 'KORDESTAN', url: 'https://sepehrtv.ir/live/kordestan', color: 'cyan', method: 'iframe' },
+        { name: 'KERMANSHAH', url: 'https://sepehrtv.ir/live/kermanshah', color: 'cyan', method: 'iframe' },
+        { name: 'ILAM', url: 'https://sepehrtv.ir/live/ilam', color: 'cyan', method: 'iframe' },
+        { name: 'BOOSHEHR', url: 'https://sepehrtv.ir/live/bushehr', color: 'cyan', method: 'iframe' },
+        { name: 'ABADAN', url: 'https://sepehrtv.ir/live/abadan', color: 'cyan', method: 'iframe' },
+        { name: 'BANDARABBAS', url: 'https://sepehrtv.ir/live/khalijefars', color: 'cyan', method: 'iframe' },
+        { name: 'AHVAZ', url: 'https://sepehrtv.ir/live/khoozestan', color: 'cyan', method: 'iframe' },
+        { name: 'KISH', url: 'https://sepehrtv.ir/live/kish', color: 'cyan', method: 'iframe' },
+        { name: 'ZAHEDAN', url: 'https://sepehrtv.ir/live/hamoon', color: 'cyan', method: 'iframe' },
+        { name: 'ALBORZ', url: 'https://sepehrtv.ir/live/alborz', color: 'cyan', method: 'iframe' },
+        { name: 'ARAK', url: 'https://sepehrtv.ir/live/aftab', color: 'cyan', method: 'iframe' },
+        { name: 'SEMNAN', url: 'https://sepehrtv.ir/live/semnan', color: 'cyan', method: 'iframe' },
+        { name: 'QOM', url: 'https://sepehrtv.ir/live/noor', color: 'cyan', method: 'iframe' },
+        { name: 'QAZVIN', url: 'https://sepehrtv.ir/live/qazvin', color: 'cyan', method: 'iframe' },
+        { name: '4Mahalebakhtiari', url: 'https://sepehrtv.ir/live/jahanbin', color: 'cyan', method: 'iframe' },
+        { name: 'HAMADAN', url: 'https://sepehrtv.ir/live/hamedan', color: 'cyan', method: 'iframe' },
+        { name: 'LORESTAN', url: 'https://sepehrtv.ir/live/aflak', color: 'cyan', method: 'iframe' },
+        { name: 'KERMAN', url: 'https://sepehrtv.ir/live/kerman', color: 'cyan', method: 'iframe' },
+        { name: 'ESFEHAN', url: 'https://sepehrtv.ir/live/esfahan', color: 'cyan', method: 'iframe' },
+        { name: 'FARS', url: 'https://sepehrtv.ir/live/fars', color: 'cyan', method: 'iframe' },
+        { name: 'YAZD', url: 'https://sepehrtv.ir/live/taban', color: 'cyan', method: 'iframe' },
+        { name: 'YASOOJ', url: 'https://sepehrtv.ir/live/dena', color: 'cyan', method: 'iframe' },
+        { name: 'KH.JONOBI', url: 'https://sepehrtv.ir/live/khorasanjonoobi', color: 'cyan', method: 'iframe' },
+        { name: 'KH.SHOMALI', url: 'https://sepehrtv.ir/live/khorasanshomali', color: 'cyan', method: 'iframe' },
+        { name: 'KH.RAZAVI', url: 'https://sepehrtv.ir/live/khorasanrazavi', color: 'cyan', method: 'iframe' },
+        { name: 'GORGAN', url: 'https://sepehrtv.ir/live/golestan', color: 'cyan', method: 'iframe' },
+        { name: 'MAZANDARAN', url: 'https://sepehrtv.ir/live/mazandaran', color: 'cyan', method: 'iframe' },
+        { name: 'GILAN', url: 'https://sepehrtv.ir/live/baran', color: 'cyan', method: 'iframe' },
+        { name: 'ARDABIL', url: 'https://sepehrtv.ir/live/sabalan', color: 'cyan', method: 'iframe' },
+        { name: 'TABRIZ', url: 'https://sepehrtv.ir/live/sahand', color: 'cyan', method: 'iframe' },
+        { name: 'URMIA', url: 'https://sepehrtv.ir/live/azarbayjan', color: 'cyan', method: 'iframe' },
+        { name: 'ZANJAN', url: 'https://sepehrtv.ir/live/eshragh', color: 'cyan', method: 'iframe' },
+      ],
+      kurdish: [
+        { name: 'Zagros (HLS)', url: 'https://5a3ed7a72ed4b.streamlock.net/zagrostv/SMIL:myStream.smil/playlist.m3u8', color: 'green' },
+        { name: 'Kanal8 (HLS)', url: 'https://live.channel8.com/Channel8-Kurdish/index.fmp4.m3u8', color: 'green' },
+        { name: 'Rudaw (HLS)', url: 'https://svs.itworkscdn.net/rudawlive/rudawlive.smil/playlist.m3u8', color: 'green' },
+        { name: 'Kurdsat News (HLS)', url: 'https://hlspackager.akamaized.net/live/DB/KURDSAT_NEWS/HLS/KURDSAT_NEWS.m3u8', color: 'green' },
+        { name: 'Sterk (HLS)', url: 'https://5dab1db4b25fe.streamlock.net/sterk/sterktv/chunklist_w1084077249.m3u8', color: 'green' },
+        { name: 'NRT News (HLS)', url: 'https://media.streambrothers.com:1936/8226/8226/playlist.m3u8', color: 'green' },
+        { name: '4 Kurd (HLS)', url: 'https://4kuhls.persiana.live/hls/stream.m3u8', color: 'green' },
+        { name: 'Med Music (HLS)', url: 'https://zindu.tv/intern-play.php?url=http://54.36.110.140/live3/live3.m3u8', color: 'green' },
+        { name: 'Aryen (HLS)', url: 'https://stream.aryen.tv/live/tv/chunklist_w189856026.m3u8', color: 'green' },
+        { name: 'Waar (HLS)', url: 'https://live.kwikmotion.com/waarmedialive/waarmedia.smil/waarmediapublish/waarmedia_source/chunks.m3u8', color: 'green' },
+        { name: 'Rojava (HLS)', url: 'https://hlspackager.akamaized.net/live/DB/ROJAVA_HD/HLS/ROJAVA_HD.m3u8?hdnea=exp=1768140786~acl=/~hmac=5cfa0f22b508e7ced937081a07cfdc6a1c8666c75a27d75d53cdc3bf53163ef3', color: 'green' },
+        { name: 'Kurdsat HD (HLS)', url: 'https://hlspackager.akamaized.net/live/DB/KURDSAT_HD/HLS/KURDSAT_HD.m3u8', color: 'green' },
+        { name: 'Kurdistan TV (HLS)', url: 'https://5a3ed7a72ed4b.streamlock.net/live/SMIL:myStream.smil/playlist.m3u8', color: 'green' },
+        { name: 'PDKI (HLS)', url: 'https://northtelecom.live/KURD.m3u8', color: 'green' },
+        { name: 'Komala (HLS)', url: 'https://live.tvkomala.com/live/komala/playlist.m3u8', color: 'green' },
+        { name: 'GK (HLS)', url: 'https://live.host247.net/gk/gksat/chunklist_w624411416.m3u8', color: 'green' },
+        { name: 'IRIB Kurdistan (HLS)', url: 'https://live-azd1103.telewebion.ir/ek/tv1/live/1080p/index.m3u8', color: 'green' },
+        { name: 'Ava TV (Web)', url: 'https://www.ava.news/livewatch', method: 'external', color: 'orange' },
+        { name: 'Sahar TV (Web)', url: 'https://kurdish.sahartv.ir/live', method: 'external', color: 'orange' },
+        { name: 'UTV Hawler (Web)', url: 'https://utvhawler.net/index.htm', method: 'external', color: 'orange' },
+        { name: 'Baxche (HLS)', url: 'https://5dcabf026b188.streamlock.net/afarinTV/livestream/playlist.m3u8', color: 'green' },
+        { name: 'Afarin Kids (HLS)', url: 'https://65f16f0fdfc51.streamlock.net/afarinTV/livestream/playlist.m3u8', color: 'green' },
+        { name: 'Zarok Kurmanci (HLS)', url: 'https://zindikurmanci.zaroktv.com.tr/hls/0/stream.m3u8', color: 'green' },
+        { name: 'Zarok Sorani (HLS)', url: 'https://zindisorani.zaroktv.com.tr/hls/stream.m3u8', color: 'green' },
+        { name: 'Payam TV (HLS)', url: 'https://media2.streambrothers.com:1936/8218/8218/chunklist_w1239498607.m3u8', color: 'green' },
+        { name: 'TRT Kurdî (HLS)', url: 'https://tv-trtkurdi.medya.trt.com.tr/master_1440.m3u8', color: 'green' }
+      ],
+      karwan: [
+        // Kids (blue)
+        { name: 'Kidco TV', url: 'https://karwan.tv/kidco-tv', method: 'external', color: 'blue', subgroup: 'blue' },
+        { name: 'MMN Kids', url: 'https://karwan.tv/mmn-kids', method: 'external', color: 'blue', subgroup: 'blue' },
+        { name: 'NRT 3 Kids', url: 'https://karwan.tv/nrt-3-kids', method: 'external', color: 'blue', subgroup: 'blue' },
+        { name: 'Kurdmax Pepule', url: 'https://karwan.tv/kurdmax-pepule', method: 'external', color: 'blue', subgroup: 'blue' },
+        { name: 'Jojo Mama', url: 'https://karwan.tv/jojo-mama', method: 'external', color: 'blue', subgroup: 'blue' },
+        { name: 'Astera Baby', url: 'https://karwan.tv/astera-baby', method: 'external', color: 'blue', subgroup: 'blue' },
+        
+        // Movie (purple)
+        { name: 'MMN Movies', url: 'https://karwan.tv/mmn-movies', method: 'external', color: 'purple', subgroup: 'purple' },
+        { name: 'Soran Entertainment TV', url: 'https://karwan.tv/soran-entertainment-tv', method: 'external', color: 'purple', subgroup: 'purple' },
+        { name: 'Bnar Movies', url: 'https://karwan.tv/bnar-movies', method: 'external', color: 'purple', subgroup: 'purple' },
+        { name: 'Bnar TV', url: 'https://karwan.tv/bnar-tv', method: 'external', color: 'purple', subgroup: 'purple' },
+        { name: 'Befrin TV', url: 'https://karwan.tv/befrin-tv', method: 'external', color: 'purple', subgroup: 'purple' },
+        { name: 'Jamawar TV', url: 'https://karwan.tv/jamawar-tv', method: 'external', color: 'purple', subgroup: 'purple' },
+        { name: 'Barin Movies', url: 'https://karwan.tv/barin-movies', method: 'external', color: 'purple', subgroup: 'purple' },
+        { name: 'Astera Movies', url: 'https://karwan.tv/astera-movies', method: 'external', color: 'purple', subgroup: 'purple' },
+        { name: 'Derwaze TV', url: 'https://karwan.tv/derwaze-tv', method: 'external', color: 'purple', subgroup: 'purple' },
+        { name: 'Bnar Action', url: 'https://karwan.tv/bnar-action', method: 'external', color: 'purple', subgroup: 'purple' },
+        
+        // Dubbad (pink)
+        { name: 'MMN Drama', url: 'https://karwan.tv/mmn-drama', method: 'external', color: 'pink', subgroup: 'pink' },
+        { name: 'MMN Show', url: 'https://karwan.tv/mmn-show', method: 'external', color: 'pink', subgroup: 'pink' },
+        { name: 'Astera Show', url: 'https://karwan.tv/astera-show', method: 'external', color: 'pink', subgroup: 'pink' },
+        { name: 'Infinity TV', url: 'https://karwan.tv/infinity-tv', method: 'external', color: 'pink', subgroup: 'pink' },
+        { name: 'Astera Family', url: 'https://karwan.tv/astera-family', method: 'external', color: 'pink', subgroup: 'pink' },
+        { name: 'Barin Family', url: 'https://karwan.tv/barin-family', method: 'external', color: 'pink', subgroup: 'pink' },
+        { name: 'Srusht TV', url: 'https://karwan.tv/srusht-tv', method: 'external', color: 'pink', subgroup: 'pink' },
+        { name: 'Avar TV', url: 'https://karwan.tv/avar-tv', method: 'external', color: 'pink', subgroup: 'pink' },
+        { name: 'Halabja TV', url: 'https://karwan.tv/halabja-tv', method: 'external', color: 'pink', subgroup: 'pink' },
+        { name: 'Rozh TV', url: 'https://karwan.tv/rozh-tv', method: 'external', color: 'pink', subgroup: 'pink' },
+        { name: 'Speda Drama', url: 'https://karwan.tv/speda-drama', method: 'external', color: 'pink', subgroup: 'pink' },
+        { name: 'Delal TV', url: 'https://karwan.tv/delal-tv', method: 'external', color: 'pink', subgroup: 'pink' },
+        { name: 'Kurdmax TV', url: 'https://karwan.tv/kurdmax-tv', method: 'external', color: 'pink', subgroup: 'pink' },
+        { name: 'Zaxo TV', url: 'https://karwan.tv/zaxo-tv', method: 'external', color: 'pink', subgroup: 'pink' },
+        { name: 'Kurdmax Show TV', url: 'https://karwan.tv/kurdmax-show-tv', method: 'external', color: 'pink', subgroup: 'pink' },
+        { name: 'Mix TV', url: 'https://karwan.tv/mix-tv', method: 'external', color: 'pink', subgroup: 'pink' },
+        
+        // Blandad (grey)
+        { name: 'Karwan Duhok TV', url: 'https://karwan.tv/duhok-tv', method: 'external', color: 'grey', subgroup: 'grey' },
+        { name: 'Cihan TV', url: 'https://karwan.tv/cihan-tv', method: 'external', color: 'grey', subgroup: 'grey' },
+        { name: 'Khak TV', url: 'https://karwan.tv/khak-tv', method: 'external', color: 'grey', subgroup: 'grey' },
+        { name: 'Zed TV Plus', url: 'https://karwan.tv/zed-tv-plus', method: 'external', color: 'grey', subgroup: 'grey' },
+        { name: 'Karwan Slemani TV', url: 'https://karwan.tv/slemani-tv', method: 'external', color: 'grey', subgroup: 'grey' },
+        
+        // Music (yellow)
+        { name: 'Sima TV', url: 'https://karwan.tv/sima-tv', method: 'external', color: 'yellow', subgroup: 'yellow' },
+        { name: 'Shna TV', url: 'https://karwan.tv/shna-tv', method: 'external', color: 'yellow', subgroup: 'yellow' },
+        { name: 'Kurd 7', url: 'https://karwan.tv/kurd-7', method: 'external', color: 'yellow', subgroup: 'yellow' },
+        { name: 'Kurdmax Music', url: 'https://karwan.tv/kurdmax-music', method: 'external', color: 'yellow', subgroup: 'yellow' },
+        { name: 'MMN Documentary', url: 'https://karwan.tv/mmn-clip', method: 'external', color: 'yellow', subgroup: 'yellow' },
+        { name: 'Astera Culture', url: 'https://karwan.tv/astera-culture', method: 'external', color: 'yellow', subgroup: 'yellow' },
+        { name: 'Derin TV', url: 'https://karwan.tv/derin-tv', method: 'external', color: 'yellow', subgroup: 'yellow' },
+        { name: 'Reng TV', url: 'https://karwan.tv/reng-tv', method: 'external', color: 'yellow', subgroup: 'yellow' },
+        { name: 'Euro Kurd TV', url: 'https://karwan.tv/euro-kurd-tv', method: 'external', color: 'yellow', subgroup: 'yellow' },
+        { name: 'Kurdana TV', url: 'https://karwan.tv/kurdana-tv', method: 'external', color: 'yellow', subgroup: 'yellow' },
+        { name: 'Azadi TV', url: 'https://karwan.tv/azadi-tv', method: 'external', color: 'yellow', subgroup: 'yellow' },
+        { name: 'Kanal 21', url: 'https://karwan.tv/kanali-21', method: 'external', color: 'yellow', subgroup: 'yellow' },
+        
+        // Dokumentär (maroon)
+        { name: 'MMN Documentary', url: 'https://karwan.tv/mmn-documentary', method: 'external', color: 'maroon', subgroup: 'maroon' },
+        { name: 'Astera Documentary', url: 'https://karwan.tv/astera-documentary', method: 'external', color: 'maroon', subgroup: 'maroon' },
+        { name: 'Reng Documentary', url: 'https://karwan.tv/reng-documentary', method: 'external', color: 'maroon', subgroup: 'maroon' },
+        { name: 'Zed TV', url: 'https://karwan.tv/zed-tv', method: 'external', color: 'maroon', subgroup: 'maroon' },
+        
+        // Dini (green)
+        { name: 'NRT 4', url: 'https://karwan.tv/nrt-4', method: 'external', color: 'green', subgroup: 'green' },
+        { name: 'Mihrab TV', url: 'https://karwan.tv/mihrab-tv', method: 'external', color: 'green', subgroup: 'green' },
+        { name: 'UTV Duhok', url: 'https://karwan.tv/utv-duhok', method: 'external', color: 'green', subgroup: 'green' },
+        { name: 'UTV Hawler', url: 'https://karwan.tv/utv-hawler', method: 'external', color: 'green', subgroup: 'green' },
+        { name: 'Shar TV', url: 'https://karwan.tv/shar-tv', method: 'external', color: 'green', subgroup: 'green' },
+        { name: 'Farmoda TV', url: 'https://karwan.tv/farmoda-tv', method: 'external', color: 'green', subgroup: 'green' },
+        { name: 'Ranya TV', url: 'https://karwan.tv/ranya-tv', method: 'external', color: 'green', subgroup: 'green' },
+        { name: 'Aro Family', url: 'https://karwan.tv/aro-family', method: 'external', color: 'green', subgroup: 'green' },
+        
+        // Kultur (brown)
+        { name: 'Dever TV', url: 'https://karwan.tv/dever-tv', method: 'external', color: 'brown', subgroup: 'brown' },
+        { name: 'Rasan TV', url: 'https://karwan.tv/rasan-tv', method: 'external', color: 'brown', subgroup: 'brown' },
+        
+        // Srodi Dini (magenta)
+        { name: 'Dimen TV', url: 'https://karwan.tv/dimen-tv', method: 'external', color: 'magenta', subgroup: 'magenta' },
+        { name: 'Bangxwazen Badinan TV', url: 'https://karwan.tv/bangxwazen-badinan-tv', method: 'external', color: 'magenta', subgroup: 'magenta' },
+        { name: 'Esra TV', url: 'https://karwan.tv/esra-tv', method: 'external', color: 'magenta', subgroup: 'magenta' },
+        
+        // Nyhet (beige)
+        { name: 'Kurd Channel', url: 'https://karwan.tv/kurd-channel', method: 'external', color: 'beige', subgroup: 'beige' },
+        { name: 'Cira TV', url: 'https://karwan.tv/cira-tv', method: 'external', color: 'beige', subgroup: 'beige' },
+        { name: 'Karwan Nalia TV', url: 'https://karwan.tv/nalia-tv', method: 'external', color: 'beige', subgroup: 'beige' },
+        { name: 'Rojhelat TV', url: 'https://karwan.tv/rojhelat-tv', method: 'external', color: 'beige', subgroup: 'beige' },
+        { name: 'Speda TV', url: 'https://karwan.tv/speda-tv', method: 'external', color: 'beige', subgroup: 'beige' },
+        { name: 'Kirkuk TV', url: 'https://karwan.tv/kirkuk-tv', method: 'external', color: 'beige', subgroup: 'beige' },
+        { name: 'Ava TV', url: 'https://karwan.tv/ava-tv', method: 'external', color: 'beige', subgroup: 'beige' }
+      ],
+      websites: [
+        { name: 'IMVBox', url: 'https://www.imvbox.com/en', method: 'external', color: 'orange' },
+        { name: 'Persianity', url: 'https://persianity.com', method: 'external', color: 'orange' },
+        { name: 'Parsa TV', url: 'https://parsatv.com', method: 'external', color: 'orange' },
+        { name: 'MDB Max', url: 'https://mdbmax.com/', method: 'external', color: 'orange' },
+        { name: 'FarsiPlex', url: 'https://farsiplex.com', method: 'external', color: 'orange' },
+        { name: 'Flnd Buzz', url: 'https://flnd.buzz/', method: 'external', color: 'orange' },
+        { name: 'Farsiland Movies', url: 'https://farsiland.com/movies', method: 'external', color: 'orange' },
+        { name: 'Persian Hive', url: 'https://persianhive.com', method: 'external', color: 'orange' },
+        { name: 'Namakade', url: 'https://namakade.com', method: 'external', color: 'orange' },
+        { name: 'Telewebion', url: 'https://telewebion.ir/', method: 'external', color: 'orange' },
+        { name: 'Sepehr TV', url: 'https://beta.sepehrtv.ir/', method: 'external', color: 'orange' },
+        { name: 'Sassan TV', url: 'https://sassantv.com/', method: 'external', color: 'orange' },
+        { name: 'Giniko TV', url: 'https://giniko.com/watch.php?id=iran', method: 'external', color: 'orange' }
+      ]
     };
 
-    // (Resten av JavaScript-koden är identisk med tidigare version,
-    //  förutom att currentChannel uppdaterats till den nya TV1-länken)
     let hls;
-    let currentChannel = { name: 'TV1', url: 'https://lenz.splus.ir/PLTV/88888888/224/3221226637/1.m3u8', method: 'hls' };
+    let currentChannel = { name: 'TV1', url: 'https://live-azd1103.telewebion.ir/ek/tv1/live/1080p/index.m3u8', method: 'hls' };
     let favorites = JSON.parse(localStorage.getItem('favorites') || '[]');
     let currentFilter = null;
     let currentKarwanSubgroup = 'all';
@@ -740,7 +905,7 @@
 
       if (url.includes('.m3u8')) {
         if (Hls.isSupported()) {
-          // Förbättrad HLS-konfiguration
+          // Förbättrad HLS-konfiguration för stabilare uppspelning
           const isTelewebion = url.includes('telewebion');
           hls = new Hls({
             debug: false,
