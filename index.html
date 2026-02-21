@@ -493,53 +493,7 @@
     const video = document.getElementById('video-player');
 
     if (Hls.isSupported()) {
-      hls = new Hls({
-        debug: false,
-        enableWorker: true,
-
-        // ── Snabb start ──────────────────────────────────────────────
-        // Börja spela så fort 1 segment är laddat istället för att
-        // bygga upp en stor buffer först
-        startLevel: -1,           // auto-välj kvalitet direkt
-        autoStartLoad: true,
-        startPosition: -1,        // hoppa till live-edge direkt
-        liveSyncDurationCount: 2, // håll bara 2 segment bakom live-edge
-        liveMaxLatencyDurationCount: 4,
-        maxBufferLength: 8,       // buffra max 8s (default 30s) → startar snabbare
-        maxMaxBufferLength: 30,
-        maxBufferHole: 0.5,
-        backBufferLength: 10,
-        // ─────────────────────────────────────────────────────────────
-
-        manifestLoadPolicy: {
-          default: {
-            maxTimeToFirstByteMs: 15000,
-            maxLoadTimeMs: 15000,
-            timeoutRetry: { maxNumRetry: 3, retryDelayMs: 500, maxRetryDelayMs: 4000 }
-          }
-        },
-        xhrSetup(xhr) {
-          const ua = document.getElementById('ua-select').value;
-          if (ua) try { xhr.setRequestHeader('User-Agent', ua); } catch(e){}
-          if (referer) try { xhr.setRequestHeader('Referer', referer); } catch(e){}
-        }
-      });
-
-      // Spela så fort första fragmentet är klart — vänta inte på MANIFEST_PARSED
-      hls.on(Hls.Events.FRAG_LOADED, () => {
-        if (video.paused) video.play().catch(()=>{});
-      });
-      hls.on(Hls.Events.MANIFEST_PARSED, () => video.play().catch(()=>{}));
-      hls.on(Hls.Events.ERROR, (_, data) => {
-        if (data.fatal) {
-          if (data.type === Hls.ErrorTypes.NETWORK_ERROR) setTimeout(()=>hls.startLoad(), 2000);
-          else if (data.type === Hls.ErrorTypes.MEDIA_ERROR) hls.recoverMediaError();
-          else showError();
-        }
-      });
-
-      hls.loadSource(url);
-      hls.attachMedia(video);
+      startHls(video, url, referer);
     } else if (video.canPlayType('application/vnd.apple.mpegurl')) {
       video.src = url;
       video.play().catch(()=>{});
@@ -547,6 +501,88 @@
       showError();
     }
     updateActiveChannel();
+  }
+
+  // Försök hämta master-playlist och välj lägsta variant direkt
+  // → sparar ett extra round-trip + startar på lägre bitrate = snabbare
+  async function resolveLowestVariant(masterUrl, referer) {
+    try {
+      const res = await fetch(masterUrl, { 
+        headers: referer ? { 'Referer': referer } : {},
+        signal: AbortSignal.timeout(6000)
+      });
+      const text = await res.text();
+      if (!text.includes('#EXT-X-STREAM-INF')) return masterUrl; // redan variant-playlist
+
+      // Hitta alla varianter med deras bandbredd
+      const lines = text.split('\n');
+      let best = null;
+      let bestBw = Infinity;
+      for (let i = 0; i < lines.length; i++) {
+        const line = lines[i].trim();
+        if (line.startsWith('#EXT-X-STREAM-INF')) {
+          const bwMatch = line.match(/BANDWIDTH=(\d+)/);
+          const bw = bwMatch ? parseInt(bwMatch[1]) : 999999999;
+          const nextLine = lines[i+1] ? lines[i+1].trim() : '';
+          if (nextLine && !nextLine.startsWith('#') && bw < bestBw) {
+            bestBw = bw;
+            best = nextLine;
+          }
+        }
+      }
+      if (!best) return masterUrl;
+
+      // Bygg absolut URL om relativ
+      if (best.startsWith('http')) return best;
+      const base = masterUrl.substring(0, masterUrl.lastIndexOf('/') + 1);
+      return base + best;
+    } catch(e) {
+      return masterUrl; // fallback till original
+    }
+  }
+
+  async function startHls(video, url, referer) {
+    // Lös ut lägsta variant för lenz.splus.ir (och liknande)
+    const isLenz = url.includes('lenz.splus.ir') || url.includes('splus.ir');
+    const streamUrl = isLenz ? await resolveLowestVariant(url, referer) : url;
+
+    hls = new Hls({
+      debug: false,
+      enableWorker: true,
+      startLevel: 0,              // börja alltid på lägsta nivå
+      autoStartLoad: true,
+      startPosition: -1,          // hoppa till live-edge direkt
+      liveSyncDurationCount: 2,
+      liveMaxLatencyDurationCount: 5,
+      maxBufferLength: 6,         // buffra bara 6s innan start
+      maxMaxBufferLength: 20,
+      maxBufferHole: 0.5,
+      backBufferLength: 8,
+      manifestLoadPolicy: {
+        default: {
+          maxTimeToFirstByteMs: 12000,
+          maxLoadTimeMs: 12000,
+          timeoutRetry: { maxNumRetry: 3, retryDelayMs: 500, maxRetryDelayMs: 4000 }
+        }
+      },
+      xhrSetup(xhr) {
+        const ua = document.getElementById('ua-select').value;
+        if (ua) try { xhr.setRequestHeader('User-Agent', ua); } catch(e){}
+        if (referer) try { xhr.setRequestHeader('Referer', referer); } catch(e){}
+      }
+    });
+
+    hls.on(Hls.Events.MANIFEST_PARSED, () => video.play().catch(()=>{}));
+    hls.on(Hls.Events.ERROR, (_, data) => {
+      if (data.fatal) {
+        if (data.type === Hls.ErrorTypes.NETWORK_ERROR) setTimeout(()=>{ if(hls) hls.startLoad(); }, 2000);
+        else if (data.type === Hls.ErrorTypes.MEDIA_ERROR) hls.recoverMediaError();
+        else showError();
+      }
+    });
+
+    hls.loadSource(streamUrl);
+    hls.attachMedia(video);
   }
 
   function showError() {
