@@ -488,13 +488,20 @@
       return;
     }
 
-    // HLS
-    wrapper.innerHTML = '<video id="video-player" controls autoplay></video>';
+    // Visa laddningsindikator direkt — ger visuell feedback medan vi väntar
+    wrapper.innerHTML = `
+      <div id="loading-screen" style="display:flex;flex-direction:column;align-items:center;justify-content:center;gap:16px;">
+        <div id="spinner" style="width:48px;height:48px;border:4px solid rgba(78,204,163,0.3);border-top-color:#4ecca3;border-radius:50%;animation:spin 0.8s linear infinite;"></div>
+        <div id="loading-text" style="color:#4ecca3;font-size:0.95em;">Ansluter till ${name}…</div>
+      </div>
+      <video id="video-player" controls autoplay style="display:none;width:100%;height:100%;"></video>`;
+
     const video = document.getElementById('video-player');
 
     if (Hls.isSupported()) {
-      startHls(video, url, referer);
+      startHls(video, url, referer, name);
     } else if (video.canPlayType('application/vnd.apple.mpegurl')) {
+      showVideo(video);
       video.src = url;
       video.play().catch(()=>{});
     } else {
@@ -503,66 +510,114 @@
     updateActiveChannel();
   }
 
-  // Försök hämta master-playlist och välj lägsta variant direkt
-  // → sparar ett extra round-trip + startar på lägre bitrate = snabbare
-  async function resolveLowestVariant(masterUrl, referer) {
-    try {
-      const res = await fetch(masterUrl, { 
-        headers: referer ? { 'Referer': referer } : {},
-        signal: AbortSignal.timeout(6000)
-      });
-      const text = await res.text();
-      if (!text.includes('#EXT-X-STREAM-INF')) return masterUrl; // redan variant-playlist
+  function showVideo(video) {
+    const ls = document.getElementById('loading-screen');
+    if (ls) ls.remove();
+    video.style.display = 'block';
+  }
 
-      // Hitta alla varianter med deras bandbredd
-      const lines = text.split('\n');
-      let best = null;
-      let bestBw = Infinity;
-      for (let i = 0; i < lines.length; i++) {
-        const line = lines[i].trim();
-        if (line.startsWith('#EXT-X-STREAM-INF')) {
-          const bwMatch = line.match(/BANDWIDTH=(\d+)/);
-          const bw = bwMatch ? parseInt(bwMatch[1]) : 999999999;
-          const nextLine = lines[i+1] ? lines[i+1].trim() : '';
-          if (nextLine && !nextLine.startsWith('#') && bw < bestBw) {
-            bestBw = bw;
-            best = nextLine;
-          }
+  // ─── Steg 1: hämta master-playlist och hitta lägsta variant + första segment ───
+  // Allt sker parallellt så HLS.js kan börja ladda segmentet så tidigt som möjligt
+  async function resolveStream(masterUrl, referer) {
+    const headers = referer ? { 'Referer': referer } : {};
+    const res = await fetch(masterUrl, { headers, signal: AbortSignal.timeout(8000) });
+    const text = await res.text();
+
+    if (!text.includes('#EXT-X-STREAM-INF')) {
+      // Redan en variant-playlist — hämta även första segment-URL parallellt
+      const firstSeg = getFirstSegment(text, masterUrl);
+      return { variantUrl: masterUrl, firstSeg };
+    }
+
+    // Master-playlist — plocka ut lägsta bitrate
+    const lines = text.split('\n');
+    let bestUrl = null, bestBw = Infinity;
+    for (let i = 0; i < lines.length; i++) {
+      const line = lines[i].trim();
+      if (line.startsWith('#EXT-X-STREAM-INF')) {
+        const bwMatch = line.match(/BANDWIDTH=(\d+)/);
+        const bw = bwMatch ? parseInt(bwMatch[1]) : 999999999;
+        const next = (lines[i+1] || '').trim();
+        if (next && !next.startsWith('#') && bw < bestBw) {
+          bestBw = bw;
+          bestUrl = next.startsWith('http') ? next : masterUrl.substring(0, masterUrl.lastIndexOf('/')+1) + next;
         }
       }
-      if (!best) return masterUrl;
+    }
+    if (!bestUrl) return { variantUrl: masterUrl, firstSeg: null };
 
-      // Bygg absolut URL om relativ
-      if (best.startsWith('http')) return best;
-      const base = masterUrl.substring(0, masterUrl.lastIndexOf('/') + 1);
-      return base + best;
+    // Hämta variant-playlisten direkt och extrahera första segmentet
+    try {
+      const vRes = await fetch(bestUrl, { headers, signal: AbortSignal.timeout(6000) });
+      const vText = await vRes.text();
+      const firstSeg = getFirstSegment(vText, bestUrl);
+      return { variantUrl: bestUrl, firstSeg };
     } catch(e) {
-      return masterUrl; // fallback till original
+      return { variantUrl: bestUrl, firstSeg: null };
     }
   }
 
-  async function startHls(video, url, referer) {
-    // Lös ut lägsta variant för lenz.splus.ir (och liknande)
-    const isLenz = url.includes('lenz.splus.ir') || url.includes('splus.ir');
-    const streamUrl = isLenz ? await resolveLowestVariant(url, referer) : url;
+  function getFirstSegment(playlistText, baseUrl) {
+    const base = baseUrl.substring(0, baseUrl.lastIndexOf('/')+1);
+    for (const line of playlistText.split('\n')) {
+      const t = line.trim();
+      if (t && !t.startsWith('#')) {
+        return t.startsWith('http') ? t : base + t;
+      }
+    }
+    return null;
+  }
+
+  async function startHls(video, url, referer, name) {
+    let variantUrl = url;
+
+    try {
+      // Steg 1 & 2 parallellt: lös ut variant-URL OCH prefetcha första segmentet
+      const [resolved] = await Promise.all([
+        resolveStream(url, referer),
+        // Värm upp TCP-anslutningen till servern (prefetch av 0 bytes)
+        fetch(url, { method: 'HEAD', signal: AbortSignal.timeout(3000) }).catch(()=>{})
+      ]);
+
+      variantUrl = resolved.variantUrl;
+
+      // Prefetcha första segmentet i bakgrunden — det hamnar i browser-cache
+      // så att HLS.js hämtar det *omedelbart* istället för att vänta på nätverket
+      if (resolved.firstSeg) {
+        fetch(resolved.firstSeg, {
+          headers: referer ? { 'Referer': referer } : {},
+          signal: AbortSignal.timeout(10000)
+        }).catch(()=>{});
+      }
+
+      // Uppdatera laddningstext
+      const lt = document.getElementById('loading-text');
+      if (lt) lt.textContent = 'Laddar stream…';
+
+    } catch(e) {
+      // Inget fel — fortsätt med original-URL
+    }
+
+    // Kontrollera att kanalen inte bytts medan vi väntade
+    if (!currentChannel || currentChannel.url !== url) return;
 
     hls = new Hls({
       debug: false,
       enableWorker: true,
-      startLevel: 0,              // börja alltid på lägsta nivå
+      startLevel: 0,
       autoStartLoad: true,
-      startPosition: -1,          // hoppa till live-edge direkt
+      startPosition: -1,
       liveSyncDurationCount: 2,
       liveMaxLatencyDurationCount: 5,
-      maxBufferLength: 6,         // buffra bara 6s innan start
-      maxMaxBufferLength: 20,
+      maxBufferLength: 5,
+      maxMaxBufferLength: 15,
       maxBufferHole: 0.5,
-      backBufferLength: 8,
+      backBufferLength: 5,
       manifestLoadPolicy: {
         default: {
-          maxTimeToFirstByteMs: 12000,
-          maxLoadTimeMs: 12000,
-          timeoutRetry: { maxNumRetry: 3, retryDelayMs: 500, maxRetryDelayMs: 4000 }
+          maxTimeToFirstByteMs: 10000,
+          maxLoadTimeMs: 10000,
+          timeoutRetry: { maxNumRetry: 3, retryDelayMs: 500, maxRetryDelayMs: 3000 }
         }
       },
       xhrSetup(xhr) {
@@ -572,7 +627,11 @@
       }
     });
 
-    hls.on(Hls.Events.MANIFEST_PARSED, () => video.play().catch(()=>{}));
+    hls.on(Hls.Events.MANIFEST_PARSED, () => {
+      showVideo(video);
+      video.play().catch(()=>{});
+    });
+
     hls.on(Hls.Events.ERROR, (_, data) => {
       if (data.fatal) {
         if (data.type === Hls.ErrorTypes.NETWORK_ERROR) setTimeout(()=>{ if(hls) hls.startLoad(); }, 2000);
@@ -581,7 +640,7 @@
       }
     });
 
-    hls.loadSource(streamUrl);
+    hls.loadSource(variantUrl);
     hls.attachMedia(video);
   }
 
