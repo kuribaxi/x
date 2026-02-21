@@ -3,13 +3,14 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>XOM TV</title>
+  <title>XOM TV - Alla iranska TV-kanaler</title>
   <script src="https://cdn.jsdelivr.net/npm/hls.js@latest"></script>
   <style>
     * { margin: 0; padding: 0; box-sizing: border-box; }
     body { font-family: Arial, sans-serif; background: linear-gradient(135deg, #1e3c72, #2a5298); color: #fff; min-height: 100vh; }
     .header { background: rgba(0,0,0,0.3); padding: 20px; text-align: center; }
     .header h1 { font-size: 2.5em; color: #4ecca3; margin-bottom: 10px; }
+    .header p { opacity: 0.9; }
     .nav-buttons { display: flex; justify-content: center; gap: 10px; flex-wrap: wrap; padding: 15px; position: relative; }
     .nav-btn { background: #4ecca3; color: #1e3c72; border: none; padding: 10px 20px; border-radius: 25px; cursor: pointer; font-weight: bold; transition: all 0.3s; position: relative; }
     .nav-btn:hover, .nav-btn.active { background: #45b393; transform: scale(1.05); }
@@ -18,47 +19,49 @@
     .dropdown-item { padding: 10px 15px; cursor: pointer; border-radius: 5px; transition: all 0.2s; margin: 2px 0; background: rgba(255,255,255,0.1); }
     .dropdown-item:hover { background: rgba(78,204,163,0.3); transform: translateX(5px); }
     .dropdown-item.active { background: rgba(78,204,163,0.5); font-weight: bold; }
-    .container { display: flex; height: calc(100vh - 200px); padding: 0 20px 20px 20px; gap: 20px; }
+    .container { display: flex; height: calc(100vh - 220px); padding: 0 20px 20px 20px; gap: 20px; }
     .channel-list { width: 280px; background: rgba(0,0,0,0.4); overflow-y: auto; border-radius: 10px; padding: 10px; }
+    @media (max-width: 768px) {
+      .container { flex-direction: column; height: auto; }
+      .channel-list { position: fixed; left: 0; top: 0; width: 100%; height: 100%; z-index: 1000; border-radius: 0; padding: 20px; transform: translateX(-100%); transition: transform 0.3s ease; }
+      .channel-list.show { transform: translateX(0); }
+      .dropdown-menu { position: fixed; top: 50%; left: 50%; transform: translate(-50%,-50%); width: 90%; max-width: 300px; }
+    }
     .video-container { flex: 1; background: #000; border-radius: 10px; overflow: hidden; display: flex; flex-direction: column; }
     .video-header { background: rgba(0,0,0,0.8); padding: 15px; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 10px; }
     .video-title { font-size: 1.3em; color: #4ecca3; }
     .video-controls { display: flex; gap: 10px; flex-wrap: wrap; }
     .btn { background: #4ecca3; color: #1e3c72; border: none; padding: 8px 15px; border-radius: 5px; cursor: pointer; font-size: 0.9em; font-weight: bold; transition: all 0.3s; }
     .btn:hover { background: #45b393; }
-    .ua-selector { padding: 5px 0; font-size: 0.9em; }
+    .ua-selector { padding: 5px 0; }
     .ua-selector select { background: rgba(255,255,255,0.2); color: white; border: 1px solid #4ecca3; padding: 5px 10px; border-radius: 3px; cursor: pointer; }
-    .video-wrapper { flex: 1; position: relative; background: #000; display: flex; align-items: center; justify-content: center; }
+    .video-wrapper { flex: 1; position: relative; background: #000; display: flex; align-items: center; justify-content: center; min-height: 400px; }
     video, iframe { width: 100%; height: 100%; object-fit: contain; border: none; }
-    .error-msg { text-align: center; padding: 40px; }
+    .error-message { text-align: center; padding: 40px; }
     .category-title { font-weight: bold; font-size: 1.1em; padding: 10px; color: #4ecca3; border-bottom: 2px solid #4ecca3; margin: 10px 0; }
     .channel-item { padding: 10px; margin: 5px 0; cursor: pointer; border-radius: 8px; transition: all 0.2s; font-size: 0.95em; display: flex; justify-content: space-between; align-items: center; background: rgba(255,255,255,0.1); }
-    .channel-item.green  { background: rgba(40,167,69,0.8); }
-    .channel-item.cyan   { background: rgba(23,162,184,0.8); }
+    .channel-item.green { background: rgba(40,167,69,0.8); }
+    .channel-item.red { background: rgba(220,53,69,0.8); }
     .channel-item.orange { background: rgba(253,126,20,0.8); }
+    .channel-item.cyan { background: rgba(23,162,184,0.8); }
     .channel-item.purple { background: rgba(111,66,193,0.8); }
-    .channel-item.blue   { background: rgba(0,123,255,0.8); }
-    .channel-item.pink   { background: rgba(232,62,140,0.8); }
-    .channel-item.grey   { background: rgba(108,117,125,0.8); }
+    .channel-item.blue { background: rgba(0,123,255,0.8); }
+    .channel-item.pink { background: rgba(232,62,140,0.8); }
+    .channel-item.grey { background: rgba(108,117,125,0.8); }
     .channel-item.yellow { background: rgba(255,193,7,0.8); }
     .channel-item.maroon { background: rgba(128,0,0,0.8); }
-    .channel-item.brown  { background: rgba(139,69,19,0.8); }
-    .channel-item.magenta{ background: rgba(255,0,255,0.8); }
-    .channel-item.beige  { background: rgba(245,245,220,0.8); color: #333; }
-    .channel-item:hover  { opacity: 0.8; transform: translateX(5px); }
+    .channel-item.brown { background: rgba(139,69,19,0.8); }
+    .channel-item.magenta { background: rgba(255,0,255,0.8); }
+    .channel-item.beige { background: rgba(245,245,220,0.8); color: #333; }
+    .channel-item:hover { opacity: 0.8; transform: translateX(5px); }
     .channel-item.active { box-shadow: 0 0 15px rgba(78,204,163,0.8); font-weight: bold; }
-    .fav-btn { background: none; border: none; color: #ffd700; cursor: pointer; font-size: 1.2em; }
-    .tag { font-size: 0.7em; opacity: 0.8; margin-left: 4px; }
+    .favorite-btn { background: none; border: none; color: #ffd700; cursor: pointer; font-size: 1.2em; padding: 0; }
     ::-webkit-scrollbar { width: 8px; }
+    ::-webkit-scrollbar-track { background: rgba(0,0,0,0.2); }
     ::-webkit-scrollbar-thumb { background: #4ecca3; border-radius: 4px; }
-    .close-btn { display: none; position: fixed; top: 20px; right: 20px; z-index: 1001; background: #dc3545; color: white; border: none; padding: 10px 20px; border-radius: 5px; cursor: pointer; }
-    @media (max-width: 768px) {
-      .container { flex-direction: column; height: auto; }
-      .channel-list { position: fixed; left: 0; top: 0; width: 100%; height: 100%; z-index: 1000; border-radius: 0; padding: 20px; transform: translateX(-100%); transition: transform 0.3s ease; overflow-y: auto; }
-      .channel-list.show { transform: translateX(0); }
-      .close-btn { display: block; }
-      .dropdown-menu { position: fixed; top: 50%; left: 50%; transform: translate(-50%,-50%); width: 90%; max-width: 300px; }
-    }
+    .close-btn { display: none; position: fixed; top: 20px; right: 20px; z-index: 1001; background: #dc3545; color: white; border: none; padding: 10px 20px; border-radius: 5px; font-size: 1.2em; cursor: pointer; }
+    @media (max-width: 768px) { .close-btn { display: block; } }
+    .tag { font-size: 0.7em; opacity: 0.8; margin-left: 4px; }
   </style>
 </head>
 <body>
@@ -68,38 +71,40 @@
   </div>
 
   <div class="nav-buttons">
-    <button class="nav-btn active" onclick="showAll()">Alla kanaler</button>
-    <button class="nav-btn" onclick="filterCat(event,'national')">1. Nationella</button>
-    <button class="nav-btn" onclick="filterCat(event,'regional')">2. Regionala</button>
-    <button class="nav-btn" onclick="filterCat(event,'kurdish')">3. Kurdiska</button>
-    <button class="nav-btn" id="karwan-btn" onclick="toggleDropdown(event)">4. Karwan TV ▾</button>
-    <div class="dropdown-menu" id="karwan-dd">
-      <div class="dropdown-item" onclick="filterKarwan('all')">Alla Karwan kanaler</div>
-      <div class="dropdown-item" onclick="filterKarwan('blue')">Kids</div>
-      <div class="dropdown-item" onclick="filterKarwan('purple')">Movie</div>
-      <div class="dropdown-item" onclick="filterKarwan('pink')">Dubbad</div>
-      <div class="dropdown-item" onclick="filterKarwan('grey')">Blandad</div>
-      <div class="dropdown-item" onclick="filterKarwan('yellow')">Music</div>
-      <div class="dropdown-item" onclick="filterKarwan('maroon')">Dokumentär</div>
-      <div class="dropdown-item" onclick="filterKarwan('green')">Dini</div>
-      <div class="dropdown-item" onclick="filterKarwan('brown')">Kultur</div>
-      <div class="dropdown-item" onclick="filterKarwan('magenta')">Srodi Dini</div>
-      <div class="dropdown-item" onclick="filterKarwan('beige')">Nyhet</div>
+    <button class="nav-btn active" onclick="showAllChannels()">Alla kanaler</button>
+    <button class="nav-btn" onclick="filterCategory('national')">1. Nationella</button>
+    <button class="nav-btn" onclick="filterCategory('regional')">2. Regionala</button>
+    <button class="nav-btn" onclick="filterCategory('kurdish')">3. Kurdiska</button>
+    <button class="nav-btn" id="karwan-btn" onclick="toggleKarwanDropdown(event)">4. Karwan TV ▾</button>
+    <div class="dropdown-menu" id="karwan-dropdown">
+      <div class="dropdown-item" onclick="filterKarwanCategory('all')">Alla Karwan kanaler</div>
+      <div class="dropdown-item" onclick="filterKarwanCategory('blue')">Kids</div>
+      <div class="dropdown-item" onclick="filterKarwanCategory('purple')">Movie</div>
+      <div class="dropdown-item" onclick="filterKarwanCategory('pink')">Dubbad</div>
+      <div class="dropdown-item" onclick="filterKarwanCategory('grey')">Blandad</div>
+      <div class="dropdown-item" onclick="filterKarwanCategory('yellow')">Music</div>
+      <div class="dropdown-item" onclick="filterKarwanCategory('maroon')">Dokumentär</div>
+      <div class="dropdown-item" onclick="filterKarwanCategory('green')">Dini</div>
+      <div class="dropdown-item" onclick="filterKarwanCategory('brown')">Kultur</div>
+      <div class="dropdown-item" onclick="filterKarwanCategory('magenta')">Srodi Dini</div>
+      <div class="dropdown-item" onclick="filterKarwanCategory('beige')">Nyhet</div>
     </div>
-    <button class="nav-btn" onclick="filterCat(event,'websites')">5. Webbplatser</button>
+    <button class="nav-btn" onclick="filterCategory('websites')">5. Webbplatser</button>
   </div>
 
   <div class="container">
     <aside class="channel-list" id="channel-list">
-      <button class="close-btn" onclick="toggleList()">✕ Stäng</button>
-      <div id="ch-container"></div>
+      <button class="close-btn" onclick="toggleChannelList()">✕ Stäng</button>
+      <div id="channels-container"></div>
     </aside>
+
     <main class="video-container">
       <div class="video-header">
         <div>
-          <div class="video-title" id="ch-title">Välj en kanal</div>
-          <div class="ua-selector">UA:
-            <select id="ua-select" onchange="reload()">
+          <div class="video-title" id="current-channel">Välj en kanal</div>
+          <div class="ua-selector">
+            📱 UA:
+            <select id="ua-select" onchange="reloadStream()">
               <option value="">Auto</option>
               <option value="Mozilla/5.0 (iPhone; CPU iPhone OS 14_0 like Mac OS X)">iPhone</option>
               <option value="Mozilla/5.0 (iPad; CPU OS 14_0 like Mac OS X)">iPad</option>
@@ -108,19 +113,25 @@
           </div>
         </div>
         <div class="video-controls">
-          <button class="btn" onclick="toggleList()">📺 Kanaler</button>
-          <button class="btn" onclick="pip()">⧉ PiP</button>
-          <button class="btn" onclick="fs()">⛶ Fullskärm</button>
-          <button class="btn" onclick="reload()">↻ Ladda om</button>
+          <button class="btn" onclick="toggleChannelList()">📺 Kanaler</button>
+          <button class="btn" onclick="togglePiP()">⧉ PiP</button>
+          <button class="btn" onclick="toggleFullscreen()">⛶ Fullskärm</button>
+          <button class="btn" onclick="reloadStream()">↻ Ladda om</button>
         </div>
       </div>
-      <div class="video-wrapper" id="vwrap">
-        <div class="error-msg"><h3>👈 Välj en kanal</h3></div>
+      <div class="video-wrapper" id="video-wrapper">
+        <div class="error-message"><h3>👈 Välj en kanal från listan</h3></div>
       </div>
     </main>
   </div>
 
-<script>
+  <script>
+  // ─── LEGEND ───────────────────────────────────────────────────────────────
+  // method: 'hls'      → spelas i HLS.js-player (m3u8, CORS öppen)
+  //         'iframe'   → inbäddas som iframe (sepehrtv.ir / telewebion)
+  //         'external' → öppnar ny flik
+  // ──────────────────────────────────────────────────────────────────────────
+
   const channels = {
     national: [
       // lenz.splus.ir — CORS öppen, fungerar med HLS.js
@@ -334,147 +345,239 @@
     ]
   };
 
+  let hls;
+  let currentChannel = null;
+  let favorites = [];
+  try { favorites = JSON.parse(localStorage.getItem('favorites') || '[]'); } catch(e) {}
+  let currentFilter = null;
+  let currentKarwanSubgroup = 'all';
 
-  let hlsInst = null;
-  let cur = null;
-  let favs = [];
-  try { favs = JSON.parse(localStorage.getItem('xomfavs') || '[]'); } catch(e) {}
-  let curFilter = null;
-  let curSub = 'all';
+  function esc(str) { return str.replace(/\\/g,'\\\\').replace(/'/g,"\\'"); }
 
-  function e(s) { return s.replace(/\\/g,'\\\\').replace(/'/g,"\\'"); }
+  function renderChannels(filter = null, karwanSubgroup = 'all') {
+    const container = document.getElementById('channels-container');
+    currentFilter = filter;
+    currentKarwanSubgroup = karwanSubgroup;
+    let html = '';
 
-  // ── Render channel list ──────────────────────────────────────────────────
-  function render(filter, sub) {
-    curFilter = filter; curSub = sub || 'all';
-    const catNames = { national:'Nationella', regional:'Regionala', kurdish:'Kurdiska', karwan:'Karwan TV', websites:'Webbplatser' };
-    const subNames = { all:'Alla', blue:'Kids', purple:'Movie', pink:'Dubbad', grey:'Blandad', yellow:'Music', maroon:'Dokumentär', green:'Dini', brown:'Kultur', magenta:'Srodi Dini', beige:'Nyhet' };
-
-    const row = ch => {
-      const m = ch.method || 'hls', r = ch.referer || '';
-      const badge = m==='iframe' ? ' <span class="tag">[live]</span>' : m==='external' ? ' <span class="tag">↗</span>' : '';
-      const star = favs.some(f=>f.url===ch.url) ? '⭐' : '☆';
-      return `<div class="channel-item ${ch.color}${cur&&cur.url===ch.url?' active':''}" onclick="play('${e(ch.url)}','${e(ch.name)}','${m}','${r}')">
-        <span>${ch.name}${badge}</span>
-        <button class="fav-btn" onclick="event.stopPropagation();fav('${e(ch.url)}','${e(ch.name)}')">${star}</button>
-      </div>`;
+    const catNames = {
+      national: 'Nationella Kanaler', regional: 'Regionala Kanaler',
+      kurdish: 'Kurdiska Kanaler', karwan: 'Karwan TV', websites: 'Webbplatser'
+    };
+    const subNames = {
+      all:'Alla Karwan kanaler', blue:'Kids', purple:'Movie', pink:'Dubbad',
+      grey:'Blandad', yellow:'Music', maroon:'Dokumentär', green:'Dini',
+      brown:'Kultur', magenta:'Srodi Dini', beige:'Nyhet'
     };
 
-    let html = '';
+    const renderList = (list) => list.map(ch => {
+      const isFav = favorites.some(f => f.name === ch.name && f.url === ch.url);
+      const method = ch.method || 'hls';
+      const referer = ch.referer || '';
+      const badge = method === 'iframe' ? ' <span class="tag">[live]</span>'
+                  : method === 'external' ? ' <span class="tag">↗</span>' : '';
+      return `<div class="channel-item ${ch.color}" onclick="loadChannel('${esc(ch.url)}','${esc(ch.name)}','${method}','${referer}')">
+        <span>${ch.name}${badge}</span>
+        <button class="favorite-btn" onclick="event.stopPropagation();toggleFav('${esc(ch.name)}','${esc(ch.url)}','${method}','${referer}')">${isFav?'⭐':'☆'}</button>
+      </div>`;
+    }).join('');
+
     if (filter === 'karwan') {
-      const list = curSub==='all' ? channels.karwan : channels.karwan.filter(c=>c.subgroup===curSub);
-      html = `<div class="category-title">Karwan TV — ${subNames[curSub]} (${list.length})</div>` + list.map(row).join('');
+      const list = karwanSubgroup === 'all' ? channels.karwan : channels.karwan.filter(c => c.subgroup === karwanSubgroup);
+      html = `<div class="category-title">Karwan TV — ${subNames[karwanSubgroup]} (${list.length})</div>` + renderList(list);
     } else if (filter) {
-      html = `<div class="category-title">${catNames[filter]}</div>` + channels[filter].map(row).join('');
+      html = `<div class="category-title">${catNames[filter]}</div>` + renderList(channels[filter]);
     } else {
       Object.keys(channels).forEach(cat => {
-        html += `<div class="category-title">${catNames[cat]}</div>` + channels[cat].map(row).join('');
+        html += `<div class="category-title">${catNames[cat]}</div>` + renderList(channels[cat]);
       });
     }
-    document.getElementById('ch-container').innerHTML = html;
+
+    container.innerHTML = html;
+    updateActiveChannel();
+    updateDropdownActive(karwanSubgroup);
   }
 
-  // ── Navigation ───────────────────────────────────────────────────────────
-  function setActive(btn) {
-    document.querySelectorAll('.nav-btn').forEach(b=>b.classList.remove('active'));
-    btn.classList.add('active');
+  function updateActiveChannel() {
+    document.querySelectorAll('.channel-item').forEach(item => {
+      item.classList.remove('active');
+    });
+    if (!currentChannel) return;
+    document.querySelectorAll('.channel-item').forEach(item => {
+      if (item.querySelector('span').textContent.replace(/ \[live\]| ↗/g,'').trim() === currentChannel.name)
+        item.classList.add('active');
+    });
   }
-  function showAll() {
-    setActive(document.querySelector('.nav-btn'));
-    closeDD(); render(null,'all');
+
+  function updateDropdownActive(sub) {
+    const map = { all:'Alla Karwan kanaler', blue:'Kids', purple:'Movie', pink:'Dubbad', grey:'Blandad', yellow:'Music', maroon:'Dokumentär', green:'Dini', brown:'Kultur', magenta:'Srodi Dini', beige:'Nyhet' };
+    document.querySelectorAll('.dropdown-item').forEach(el => {
+      el.classList.toggle('active', el.textContent.trim() === map[sub]);
+    });
   }
-  function filterCat(ev, cat) { setActive(ev.target); closeDD(); render(cat,'all'); }
-  function filterKarwan(sub) {
-    setActive(document.getElementById('karwan-btn')); closeDD(); render('karwan', sub);
+
+  function toggleFav(name, url, method, referer) {
+    const idx = favorites.findIndex(f => f.name === name && f.url === url);
+    if (idx > -1) favorites.splice(idx, 1); else favorites.push({name, url, method, referer});
+    try { localStorage.setItem('favorites', JSON.stringify(favorites)); } catch(e) {}
+    renderChannels(currentFilter, currentKarwanSubgroup);
   }
-  function toggleDropdown(e) {
+
+  function showAllChannels() {
+    document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
+    document.querySelector('.nav-btn:first-child').classList.add('active');
+    closeDropdown();
+    renderChannels(null, 'all');
+  }
+
+  function filterCategory(cat) {
+    document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
+    event.target.classList.add('active');
+    closeDropdown();
+    renderChannels(cat, 'all');
+  }
+
+  function filterKarwanCategory(sub) {
+    document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
+    document.getElementById('karwan-btn').classList.add('active');
+    closeDropdown();
+    renderChannels('karwan', sub);
+  }
+
+  function toggleKarwanDropdown(e) {
     e.stopPropagation();
-    const dd = document.getElementById('karwan-dd');
-    if (dd.classList.contains('show')) { closeDD(); return; }
-    dd.classList.add('show');
-    setTimeout(()=>document.addEventListener('click', outsideDD), 10);
-  }
-  function closeDD() { document.getElementById('karwan-dd').classList.remove('show'); document.removeEventListener('click', outsideDD); }
-  function outsideDD(e) { if (!document.getElementById('karwan-dd').contains(e.target) && !document.getElementById('karwan-btn').contains(e.target)) closeDD(); }
-  function toggleList() { document.getElementById('channel-list').classList.toggle('show'); }
-
-  // ── Favorites ────────────────────────────────────────────────────────────
-  function fav(url, name) {
-    const i = favs.findIndex(f=>f.url===url);
-    if (i>-1) favs.splice(i,1); else favs.push({url,name});
-    try { localStorage.setItem('xomfavs', JSON.stringify(favs)); } catch(e) {}
-    render(curFilter, curSub);
+    const dd = document.getElementById('karwan-dropdown');
+    const open = dd.classList.contains('show');
+    closeDropdown();
+    if (!open) {
+      dd.classList.add('show');
+      updateDropdownActive(currentKarwanSubgroup);
+      setTimeout(() => document.addEventListener('click', outsideClick), 10);
+    }
   }
 
-  // ── Player ───────────────────────────────────────────────────────────────
-  function play(url, name, method, referer) {
+  function closeDropdown() {
+    document.getElementById('karwan-dropdown').classList.remove('show');
+    document.removeEventListener('click', outsideClick);
+  }
+
+  function outsideClick(e) {
+    if (!document.getElementById('karwan-dropdown').contains(e.target) &&
+        !document.getElementById('karwan-btn').contains(e.target)) closeDropdown();
+  }
+
+  function toggleChannelList() {
+    document.getElementById('channel-list').classList.toggle('show');
+  }
+
+  function loadChannel(url, name, method, referer) {
+    method = method || 'hls';
+    referer = referer || '';
     if (window.innerWidth <= 768) document.getElementById('channel-list').classList.remove('show');
-    cur = {url, name, method, referer};
-    document.getElementById('ch-title').textContent = name;
+    currentChannel = {name, url, method, referer};
+    document.getElementById('current-channel').textContent = name;
+    const wrapper = document.getElementById('video-wrapper');
 
-    if (hlsInst) { hlsInst.destroy(); hlsInst = null; }
+    if (hls) { hls.destroy(); hls = null; }
 
     if (method === 'external') { window.open(url, '_blank'); return; }
 
-    const wrap = document.getElementById('vwrap');
-
     if (method === 'iframe') {
-      wrap.innerHTML = `<iframe src="${url}" allowfullscreen allow="autoplay; fullscreen"></iframe>`;
-      render(curFilter, curSub);
+      wrapper.innerHTML = `<iframe src="${url}" allowfullscreen allow="autoplay; fullscreen"></iframe>`;
+      updateActiveChannel();
       return;
     }
 
-    // HLS — enkel och direkt, ingen pre-fetch overhead
-    wrap.innerHTML = '<video id="vplayer" controls autoplay style="width:100%;height:100%;"></video>';
-    const vid = document.getElementById('vplayer');
+    // HLS
+    wrapper.innerHTML = '<video id="video-player" controls autoplay></video>';
+    const video = document.getElementById('video-player');
 
     if (Hls.isSupported()) {
-      hlsInst = new Hls({
-        enableWorker:          true,
-        startPosition:         -1,      // live-edge direkt
-        liveSyncDurationCount:  3,
-        maxBufferLength:        10,
-        maxMaxBufferLength:     30,
-        backBufferLength:       10,
+      hls = new Hls({
+        debug: false,
+        enableWorker: true,
+
+        // ── Snabb start ──────────────────────────────────────────────
+        // Börja spela så fort 1 segment är laddat istället för att
+        // bygga upp en stor buffer först
+        startLevel: -1,           // auto-välj kvalitet direkt
+        autoStartLoad: true,
+        startPosition: -1,        // hoppa till live-edge direkt
+        liveSyncDurationCount: 2, // håll bara 2 segment bakom live-edge
+        liveMaxLatencyDurationCount: 4,
+        maxBufferLength: 8,       // buffra max 8s (default 30s) → startar snabbare
+        maxMaxBufferLength: 30,
+        maxBufferHole: 0.5,
+        backBufferLength: 10,
+        // ─────────────────────────────────────────────────────────────
+
+        manifestLoadPolicy: {
+          default: {
+            maxTimeToFirstByteMs: 15000,
+            maxLoadTimeMs: 15000,
+            timeoutRetry: { maxNumRetry: 3, retryDelayMs: 500, maxRetryDelayMs: 4000 }
+          }
+        },
         xhrSetup(xhr) {
           const ua = document.getElementById('ua-select').value;
-          if (ua)      try { xhr.setRequestHeader('User-Agent', ua); }      catch(err){}
-          if (referer) try { xhr.setRequestHeader('Referer',   referer); } catch(err){}
+          if (ua) try { xhr.setRequestHeader('User-Agent', ua); } catch(e){}
+          if (referer) try { xhr.setRequestHeader('Referer', referer); } catch(e){}
         }
       });
-      hlsInst.loadSource(url);
-      hlsInst.attachMedia(vid);
-      hlsInst.on(Hls.Events.MANIFEST_PARSED, () => vid.play().catch(()=>{}));
-      hlsInst.on(Hls.Events.ERROR, (_, d) => {
-        if (!d.fatal) return;
-        if      (d.type === Hls.ErrorTypes.NETWORK_ERROR) setTimeout(()=>{ if(hlsInst) hlsInst.startLoad(); }, 2000);
-        else if (d.type === Hls.ErrorTypes.MEDIA_ERROR)   hlsInst.recoverMediaError();
-        else showErr();
+
+      // Spela så fort första fragmentet är klart — vänta inte på MANIFEST_PARSED
+      hls.on(Hls.Events.FRAG_LOADED, () => {
+        if (video.paused) video.play().catch(()=>{});
       });
-    } else if (vid.canPlayType('application/vnd.apple.mpegurl')) {
-      vid.src = url; vid.play().catch(()=>{});
+      hls.on(Hls.Events.MANIFEST_PARSED, () => video.play().catch(()=>{}));
+      hls.on(Hls.Events.ERROR, (_, data) => {
+        if (data.fatal) {
+          if (data.type === Hls.ErrorTypes.NETWORK_ERROR) setTimeout(()=>hls.startLoad(), 2000);
+          else if (data.type === Hls.ErrorTypes.MEDIA_ERROR) hls.recoverMediaError();
+          else showError();
+        }
+      });
+
+      hls.loadSource(url);
+      hls.attachMedia(video);
+    } else if (video.canPlayType('application/vnd.apple.mpegurl')) {
+      video.src = url;
+      video.play().catch(()=>{});
     } else {
-      showErr();
+      showError();
     }
-    render(curFilter, curSub);
+    updateActiveChannel();
   }
 
-  function showErr() {
-    document.getElementById('vwrap').innerHTML = `<div class="error-msg"><h3>⚠️ Kunde inte ladda stream</h3><br><button class="btn" onclick="reload()">↻ Försök igen</button></div>`;
-  }
-  function reload() { if (cur) play(cur.url, cur.name, cur.method, cur.referer); }
-  function pip() {
-    const v = document.getElementById('vplayer');
-    if (!v || !document.pictureInPictureEnabled) return;
-    document.pictureInPictureElement ? document.exitPictureInPicture() : v.requestPictureInPicture().catch(()=>{});
-  }
-  function fs() {
-    const w = document.getElementById('vwrap');
-    document.fullscreenElement ? document.exitFullscreen() : w.requestFullscreen().catch(()=>{});
+  function showError() {
+    document.getElementById('video-wrapper').innerHTML = `
+      <div class="error-message">
+        <h3>⚠️ Kunde inte ladda stream</h3>
+        <p style="margin:10px 0;opacity:0.7">Kan bero på CORS eller att streamen är nere</p>
+        <button class="btn" onclick="reloadStream()">↻ Försök igen</button>
+      </div>`;
   }
 
-  // Init
-  render(null, 'all');
-</script>
+  function reloadStream() {
+    if (currentChannel) loadChannel(currentChannel.url, currentChannel.name, currentChannel.method, currentChannel.referer);
+  }
+
+  function togglePiP() {
+    const video = document.getElementById('video-player');
+    if (!video || !document.pictureInPictureEnabled) return;
+    if (document.pictureInPictureElement) document.exitPictureInPicture();
+    else video.requestPictureInPicture().catch(()=>{});
+  }
+
+  function toggleFullscreen() {
+    const wrapper = document.getElementById('video-wrapper');
+    if (!document.fullscreenElement) wrapper.requestFullscreen().catch(()=>{});
+    else document.exitFullscreen();
+  }
+
+  document.addEventListener('DOMContentLoaded', () => {
+    renderChannels();
+  });
+  </script>
 </body>
 </html>
