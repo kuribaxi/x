@@ -496,15 +496,26 @@
       hls = new Hls({
         debug: false,
         enableWorker: true,
-        lowLatencyMode: false,
-        backBufferLength: 90,
-        maxBufferLength: 60,
-        maxMaxBufferLength: 120,
+
+        // ── Snabb start ──────────────────────────────────────────────
+        // Börja spela så fort 1 segment är laddat istället för att
+        // bygga upp en stor buffer först
+        startLevel: -1,           // auto-välj kvalitet direkt
+        autoStartLoad: true,
+        startPosition: -1,        // hoppa till live-edge direkt
+        liveSyncDurationCount: 2, // håll bara 2 segment bakom live-edge
+        liveMaxLatencyDurationCount: 4,
+        maxBufferLength: 8,       // buffra max 8s (default 30s) → startar snabbare
+        maxMaxBufferLength: 30,
+        maxBufferHole: 0.5,
+        backBufferLength: 10,
+        // ─────────────────────────────────────────────────────────────
+
         manifestLoadPolicy: {
           default: {
-            maxTimeToFirstByteMs: 20000,
-            maxLoadTimeMs: 20000,
-            timeoutRetry: { maxNumRetry: 4, retryDelayMs: 1000, maxRetryDelayMs: 8000 }
+            maxTimeToFirstByteMs: 15000,
+            maxLoadTimeMs: 15000,
+            timeoutRetry: { maxNumRetry: 3, retryDelayMs: 500, maxRetryDelayMs: 4000 }
           }
         },
         xhrSetup(xhr) {
@@ -514,6 +525,10 @@
         }
       });
 
+      // Spela så fort första fragmentet är klart — vänta inte på MANIFEST_PARSED
+      hls.on(Hls.Events.FRAG_LOADED, () => {
+        if (video.paused) video.play().catch(()=>{});
+      });
       hls.on(Hls.Events.MANIFEST_PARSED, () => video.play().catch(()=>{}));
       hls.on(Hls.Events.ERROR, (_, data) => {
         if (data.fatal) {
