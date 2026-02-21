@@ -205,12 +205,12 @@
       { name: 'iFilm Dari',    url: 'https://live.presstv.ir/hls/ifilm2.m3u8',                        color: 'green' },
       { name: 'iFilm English', url: 'https://live.presstv.ir/hls/ifilmen.m3u8',                       color: 'green' },
       { name: 'iFilm Arabic',  url: 'https://live.presstv.ir/hls/ifilmar.m3u8',                       color: 'green' },
-      // telewebion — behöver Referer-header (hanteras av playern)
-      { name: 'Javaneh',      url: 'https://telewebion.ir/live/javaneh',            color: 'green', referer: 'https://telewebion.ir/' },
-      { name: 'Nava',         url: 'https://telewebion.ir/live/nava',               color: 'green', referer: 'https://telewebion.ir/' },
-      { name: 'Nama',         url: 'https://telewebion.ir/live/nama',               color: 'green', referer: 'https://telewebion.ir/' },
-      { name: 'Roya',         url: 'https://telewebion.ir/live/iribu',               color: 'green', referer: 'https://telewebion.ir/' },
-      { name: 'Nesfejahan',         url: 'https://telewebion.ir/live/nesfejahan',               color: 'green', referer: 'https://telewebion.ir/' },
+      // telewebion — öppnas som iframe (CORS-problem med direkt HLS)
+      { name: 'Javaneh',      url: 'https://telewebion.ir/live/javaneh',     color: 'green', method: 'iframe' },
+      { name: 'Nava',         url: 'https://telewebion.ir/live/nava',        color: 'green', method: 'iframe' },
+      { name: 'Nama',         url: 'https://telewebion.ir/live/nama',        color: 'green', method: 'iframe' },
+      { name: 'Roya',         url: 'https://telewebion.ir/live/iribu',       color: 'green', method: 'iframe' },
+      { name: 'Nesfejahan',   url: 'https://telewebion.ir/live/nesfejahan',  color: 'green', method: 'iframe' },
       // sepehrtv — iframe
       { name: 'Sepehr (live)', url: 'https://beta.sepehrtv.ir/live/49',                               color: 'green', method: 'iframe' },
       { name: 'Faratar',       url: 'https://beta.sepehrtv.ir/live/196462',                            color: 'green', method: 'iframe' },
@@ -277,7 +277,7 @@
       { name: 'PDKI',             url: 'https://northtelecom.live/KURD.m3u8',                                                                     color: 'green' },
       { name: 'Komala',           url: 'https://live.tvkomala.com/live/komala/playlist.m3u8',                                                     color: 'green' },
       { name: 'GK',               url: 'https://live.host247.net/gk/gksat/chunklist_w624411416.m3u8',                                             color: 'green' },
-      { name: 'IRIB Kurdistan',   url: 'https://live-azd1103.telewebion.ir/ek/tv1/live/1080p/index.m3u8', referer: 'https://telewebion.ir/',      color: 'green' },
+      { name: 'IRIB Kurdistan',   url: 'https://telewebion.ir/live/tv-kurdistan',   color: 'green', method: 'iframe' },
       { name: 'Baxche',           url: 'https://5dcabf026b188.streamlock.net/afarinTV/livestream/playlist.m3u8',                                  color: 'green' },
       { name: 'Afarin Kids',      url: 'https://65f16f0fdfc51.streamlock.net/afarinTV/livestream/playlist.m3u8',                                  color: 'green' },
       { name: 'Zarok Kurmanci',   url: 'https://zindikurmanci.zaroktv.com.tr/hls/0/stream.m3u8',                                                 color: 'green' },
