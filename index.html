@@ -62,6 +62,7 @@
     .close-btn { display: none; position: fixed; top: 20px; right: 20px; z-index: 1001; background: #dc3545; color: white; border: none; padding: 10px 20px; border-radius: 5px; font-size: 1.2em; cursor: pointer; }
     @media (max-width: 768px) { .close-btn { display: block; } }
     .tag { font-size: 0.7em; opacity: 0.8; margin-left: 4px; }
+    @keyframes spin { to { transform: rotate(360deg); } }
   </style>
 </head>
 <body>
@@ -488,13 +489,7 @@
       return;
     }
 
-    // Visa laddningsindikator direkt — ger visuell feedback medan vi väntar
-    wrapper.innerHTML = `
-      <div id="loading-screen" style="display:flex;flex-direction:column;align-items:center;justify-content:center;gap:16px;">
-        <div id="spinner" style="width:48px;height:48px;border:4px solid rgba(78,204,163,0.3);border-top-color:#4ecca3;border-radius:50%;animation:spin 0.8s linear infinite;"></div>
-        <div id="loading-text" style="color:#4ecca3;font-size:0.95em;">Ansluter till ${name}…</div>
-      </div>
-      <video id="video-player" controls autoplay style="display:none;width:100%;height:100%;"></video>`;
+    wrapper.innerHTML = '<video id="video-player" controls autoplay style="width:100%;height:100%;"></video>';
 
     const video = document.getElementById('video-player');
 
@@ -510,138 +505,39 @@
     updateActiveChannel();
   }
 
-  function showVideo(video) {
-    const ls = document.getElementById('loading-screen');
-    if (ls) ls.remove();
-    video.style.display = 'block';
-  }
 
-  // ─── Steg 1: hämta master-playlist och hitta lägsta variant + första segment ───
-  // Allt sker parallellt så HLS.js kan börja ladda segmentet så tidigt som möjligt
-  async function resolveStream(masterUrl, referer) {
-    const headers = referer ? { 'Referer': referer } : {};
-    const res = await fetch(masterUrl, { headers, signal: AbortSignal.timeout(8000) });
-    const text = await res.text();
-
-    if (!text.includes('#EXT-X-STREAM-INF')) {
-      // Redan en variant-playlist — hämta även första segment-URL parallellt
-      const firstSeg = getFirstSegment(text, masterUrl);
-      return { variantUrl: masterUrl, firstSeg };
-    }
-
-    // Master-playlist — plocka ut lägsta bitrate
-    const lines = text.split('\n');
-    let bestUrl = null, bestBw = Infinity;
-    for (let i = 0; i < lines.length; i++) {
-      const line = lines[i].trim();
-      if (line.startsWith('#EXT-X-STREAM-INF')) {
-        const bwMatch = line.match(/BANDWIDTH=(\d+)/);
-        const bw = bwMatch ? parseInt(bwMatch[1]) : 999999999;
-        const next = (lines[i+1] || '').trim();
-        if (next && !next.startsWith('#') && bw < bestBw) {
-          bestBw = bw;
-          bestUrl = next.startsWith('http') ? next : masterUrl.substring(0, masterUrl.lastIndexOf('/')+1) + next;
+    if (Hls.isSupported()) {
+      hls = new Hls({
+        enableWorker: true,
+        startPosition: -1,
+        liveSyncDurationCount: 3,
+        liveMaxLatencyDurationCount: 6,
+        maxBufferLength: 10,
+        maxMaxBufferLength: 30,
+        backBufferLength: 10,
+        xhrSetup(xhr) {
+          const ua = document.getElementById('ua-select').value;
+          if (ua) try { xhr.setRequestHeader('User-Agent', ua); } catch(e){}
+          if (referer) try { xhr.setRequestHeader('Referer', referer); } catch(e){}
         }
-      }
-    }
-    if (!bestUrl) return { variantUrl: masterUrl, firstSeg: null };
-
-    // Hämta variant-playlisten direkt och extrahera första segmentet
-    try {
-      const vRes = await fetch(bestUrl, { headers, signal: AbortSignal.timeout(6000) });
-      const vText = await vRes.text();
-      const firstSeg = getFirstSegment(vText, bestUrl);
-      return { variantUrl: bestUrl, firstSeg };
-    } catch(e) {
-      return { variantUrl: bestUrl, firstSeg: null };
-    }
-  }
-
-  function getFirstSegment(playlistText, baseUrl) {
-    const base = baseUrl.substring(0, baseUrl.lastIndexOf('/')+1);
-    for (const line of playlistText.split('\n')) {
-      const t = line.trim();
-      if (t && !t.startsWith('#')) {
-        return t.startsWith('http') ? t : base + t;
-      }
-    }
-    return null;
-  }
-
-  async function startHls(video, url, referer, name) {
-    let variantUrl = url;
-
-    try {
-      // Steg 1 & 2 parallellt: lös ut variant-URL OCH prefetcha första segmentet
-      const [resolved] = await Promise.all([
-        resolveStream(url, referer),
-        // Värm upp TCP-anslutningen till servern (prefetch av 0 bytes)
-        fetch(url, { method: 'HEAD', signal: AbortSignal.timeout(3000) }).catch(()=>{})
-      ]);
-
-      variantUrl = resolved.variantUrl;
-
-      // Prefetcha första segmentet i bakgrunden — det hamnar i browser-cache
-      // så att HLS.js hämtar det *omedelbart* istället för att vänta på nätverket
-      if (resolved.firstSeg) {
-        fetch(resolved.firstSeg, {
-          headers: referer ? { 'Referer': referer } : {},
-          signal: AbortSignal.timeout(10000)
-        }).catch(()=>{});
-      }
-
-      // Uppdatera laddningstext
-      const lt = document.getElementById('loading-text');
-      if (lt) lt.textContent = 'Laddar stream…';
-
-    } catch(e) {
-      // Inget fel — fortsätt med original-URL
-    }
-
-    // Kontrollera att kanalen inte bytts medan vi väntade
-    if (!currentChannel || currentChannel.url !== url) return;
-
-    hls = new Hls({
-      debug: false,
-      enableWorker: true,
-      startLevel: 0,
-      autoStartLoad: true,
-      startPosition: -1,
-      liveSyncDurationCount: 2,
-      liveMaxLatencyDurationCount: 5,
-      maxBufferLength: 5,
-      maxMaxBufferLength: 15,
-      maxBufferHole: 0.5,
-      backBufferLength: 5,
-      manifestLoadPolicy: {
-        default: {
-          maxTimeToFirstByteMs: 10000,
-          maxLoadTimeMs: 10000,
-          timeoutRetry: { maxNumRetry: 3, retryDelayMs: 500, maxRetryDelayMs: 3000 }
+      });
+      hls.loadSource(url);
+      hls.attachMedia(video);
+      hls.on(Hls.Events.MANIFEST_PARSED, () => video.play().catch(()=>{}));
+      hls.on(Hls.Events.ERROR, (_, data) => {
+        if (data.fatal) {
+          if (data.type === Hls.ErrorTypes.NETWORK_ERROR) setTimeout(()=>{ if(hls) hls.startLoad(); }, 2000);
+          else if (data.type === Hls.ErrorTypes.MEDIA_ERROR) hls.recoverMediaError();
+          else showError();
         }
-      },
-      xhrSetup(xhr) {
-        const ua = document.getElementById('ua-select').value;
-        if (ua) try { xhr.setRequestHeader('User-Agent', ua); } catch(e){}
-        if (referer) try { xhr.setRequestHeader('Referer', referer); } catch(e){}
-      }
-    });
-
-    hls.on(Hls.Events.MANIFEST_PARSED, () => {
-      showVideo(video);
+      });
+    } else if (video.canPlayType('application/vnd.apple.mpegurl')) {
+      video.src = url;
       video.play().catch(()=>{});
-    });
-
-    hls.on(Hls.Events.ERROR, (_, data) => {
-      if (data.fatal) {
-        if (data.type === Hls.ErrorTypes.NETWORK_ERROR) setTimeout(()=>{ if(hls) hls.startLoad(); }, 2000);
-        else if (data.type === Hls.ErrorTypes.MEDIA_ERROR) hls.recoverMediaError();
-        else showError();
-      }
-    });
-
-    hls.loadSource(variantUrl);
-    hls.attachMedia(video);
+    } else {
+      showError();
+    }
+    updateActiveChannel();
   }
 
   function showError() {
