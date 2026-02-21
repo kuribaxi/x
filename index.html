@@ -81,6 +81,24 @@
     .close-btn { display: block; }
       .dropdown-menu { position: fixed; top: 50%; left: 50%; transform: translate(-50%,-50%); width: 90%; max-width: 300px; }
     }
+
+    /* ── LG TV / Smart TV optimeringar ─────────────────────────────── */
+    @media (min-width: 1280px) and (pointer: coarse),
+           (min-width: 1280px) and (hover: none) {
+      /* Större klickytor för TV-fjärrkontroll */
+      .nav-btn       { padding: 14px 28px; font-size: 1.1em; }
+      .channel-item  { padding: 14px 12px; font-size: 1.05em; margin: 6px 0; }
+      .btn           { padding: 12px 22px; font-size: 1em; }
+      .category-title{ font-size: 1.2em; padding: 12px; }
+      .video-title   { font-size: 1.5em; }
+      .channel-list  { width: 320px; }
+      .proxy-bar     { font-size: 0.95em; padding: 10px 20px; }
+      .preset-btn    { padding: 6px 14px; font-size: 0.9em; }
+    }
+    /* TV fullskärmsläge — spelaren fyller hela skärmen */
+    body.tv-mode .container       { height: calc(100vh - 170px); }
+    body.tv-mode .channel-list    { width: 300px; }
+    body.tv-mode video            { object-fit: fill; }
   </style>
 </head>
 <body>
@@ -147,6 +165,7 @@
           <button class="btn" onclick="pip()">⧉ PiP</button>
           <button class="btn" onclick="fs()">⛶ Fullskärm</button>
           <button class="btn" onclick="reload()">↻ Ladda om</button>
+          <button class="btn" id="tv-btn" onclick="toggleTV()">📺 TV-läge</button>
         </div>
       </div>
       <div class="video-wrapper" id="vwrap">
@@ -373,7 +392,9 @@
   let hlsInst = null;
   let cur = null;
   let favs = [];
-  try { favs = JSON.parse(localStorage.getItem('xomfavs') || '[]'); } catch(e) {}
+  try { favs = JSON.parse(localStorage.getItem('xomfavs') || '[]'); } catch(e) { favs = []; }
+  // LG webOS: testa om localStorage fungerar
+  const lsOK = (function(){ try { localStorage.setItem('_t','1'); localStorage.removeItem('_t'); return true; } catch(e){ return false; } })();
   let curFilter = null;
   let curSub = 'all';
 
@@ -437,7 +458,7 @@
   function fav(url, name) {
     const i = favs.findIndex(f=>f.url===url);
     if (i>-1) favs.splice(i,1); else favs.push({url,name});
-    try { localStorage.setItem('xomfavs', JSON.stringify(favs)); } catch(e) {}
+    if (lsOK) try { localStorage.setItem('xomfavs', JSON.stringify(favs)); } catch(e) {}
     render(curFilter, curSub);
   }
 
@@ -555,7 +576,7 @@
         if (btn) btn.classList.add('active-preset');
       }
     });
-    try { localStorage.setItem('xomproxy', proxyBase); } catch(e) {}
+    if (lsOK) try { localStorage.setItem('xomproxy', proxyBase); } catch(e) {}
     if (cur && cur.method === 'hls') reload();   // ladda om aktiv kanal med ny proxy
   }
 
@@ -571,15 +592,39 @@
     updateProxy();
   }
 
-  // Återställ sparad proxy vid sidladdning
-  (function() {
-    try {
-      const saved = localStorage.getItem('xomproxy') || '';
-      if (saved) {
-        document.getElementById('proxy-url').value = saved;
-        updateProxy();
-      }
-    } catch(e) {}
+
+
+  // ── TV-läge ──────────────────────────────────────────────────────────────
+  let tvMode = false;
+
+  function toggleTV() {
+    tvMode = !tvMode;
+    document.body.classList.toggle('tv-mode', tvMode);
+    document.getElementById('tv-btn').textContent = tvMode ? '🖥️ Normal' : '📺 TV-läge';
+    if (tvMode) {
+      // Fullskärm hela sidan på TV
+      document.documentElement.requestFullscreen && document.documentElement.requestFullscreen().catch(()=>{});
+    } else {
+      document.fullscreenElement && document.exitFullscreen();
+    }
+    if (lsOK) try { localStorage.setItem('xomtv', tvMode ? '1' : ''); } catch(e) {}
+  }
+
+  // Auto-detekta LG webOS / smart TV
+  (function detectTV() {
+    const ua = navigator.userAgent || '';
+    const isTV = /SmartTV|webOS|SMART-TV|HbbTV|NetCast|BRAVIA|Tizen/i.test(ua)
+              || window.innerWidth >= 1920 && ('ontouchstart' in window === false) && navigator.maxTouchPoints === 0;
+    if (isTV) {
+      document.body.classList.add('tv-mode');
+      tvMode = true;
+      document.getElementById('tv-btn').textContent = '🖥️ Normal';
+    }
+    // Återställ sparat TV-läge
+    if (lsOK) {
+      try { if (localStorage.getItem('xomtv') === '1') { document.body.classList.add('tv-mode'); tvMode = true; document.getElementById('tv-btn').textContent = '🖥️ Normal'; } } catch(e) {}
+      try { const saved = localStorage.getItem('xomproxy') || ''; if (saved) { document.getElementById('proxy-url').value = saved; updateProxy(); } } catch(e) {}
+    }
   })();
 
   // Init
