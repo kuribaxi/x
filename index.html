@@ -51,73 +51,20 @@
     .tag { font-size: 0.7em; opacity: 0.8; margin-left: 4px; }
     ::-webkit-scrollbar { width: 8px; }
     ::-webkit-scrollbar-thumb { background: #4ecca3; border-radius: 4px; }
-    .proxy-bar { background: rgba(0,0,0,0.35); border-bottom: 1px solid rgba(78,204,163,0.3); padding: 8px 20px; display: flex; align-items: center; gap: 10px; flex-wrap: wrap; justify-content: center; font-size: 0.88em; }
-    .proxy-bar label { color: #4ecca3; font-weight: bold; white-space: nowrap; }
-    .proxy-input { flex: 1; min-width: 200px; max-width: 400px; background: rgba(255,255,255,0.1); border: 1px solid rgba(78,204,163,0.5); color: #fff; padding: 5px 10px; border-radius: 4px; font-size: 0.95em; }
-    .proxy-input::placeholder { color: rgba(255,255,255,0.35); }
-    .proxy-input:focus { outline: none; border-color: #4ecca3; }
-    .proxy-status { font-size: 0.82em; padding: 3px 10px; border-radius: 10px; white-space: nowrap; }
-    .proxy-status.on  { background: rgba(40,167,69,0.7); }
-    .proxy-status.off { background: rgba(108,117,125,0.5); }
-    .preset-btn { background: rgba(78,204,163,0.15); border: 1px solid rgba(78,204,163,0.35); color: #4ecca3; padding: 3px 10px; border-radius: 12px; cursor: pointer; font-size: 0.8em; transition: all 0.2s; white-space: nowrap; }
-    .preset-btn:hover { background: rgba(78,204,163,0.35); }
-    .preset-btn.active-preset { background: rgba(78,204,163,0.6); color: #1e3c72; font-weight: bold; }
     .close-btn { display: none; position: fixed; top: 20px; right: 20px; z-index: 1001; background: #dc3545; color: white; border: none; padding: 10px 20px; border-radius: 5px; cursor: pointer; }
     @media (max-width: 768px) {
       .container { flex-direction: column; height: auto; }
       .channel-list { position: fixed; left: 0; top: 0; width: 100%; height: 100%; z-index: 1000; border-radius: 0; padding: 20px; transform: translateX(-100%); transition: transform 0.3s ease; overflow-y: auto; }
       .channel-list.show { transform: translateX(0); }
-      .proxy-bar { background: rgba(0,0,0,0.35); border-bottom: 1px solid rgba(78,204,163,0.3); padding: 8px 20px; display: flex; align-items: center; gap: 10px; flex-wrap: wrap; justify-content: center; font-size: 0.88em; }
-    .proxy-bar label { color: #4ecca3; font-weight: bold; white-space: nowrap; }
-    .proxy-input { flex: 1; min-width: 200px; max-width: 400px; background: rgba(255,255,255,0.1); border: 1px solid rgba(78,204,163,0.5); color: #fff; padding: 5px 10px; border-radius: 4px; font-size: 0.95em; }
-    .proxy-input::placeholder { color: rgba(255,255,255,0.35); }
-    .proxy-input:focus { outline: none; border-color: #4ecca3; }
-    .proxy-status { font-size: 0.82em; padding: 3px 10px; border-radius: 10px; white-space: nowrap; }
-    .proxy-status.on  { background: rgba(40,167,69,0.7); }
-    .proxy-status.off { background: rgba(108,117,125,0.5); }
-    .preset-btn { background: rgba(78,204,163,0.15); border: 1px solid rgba(78,204,163,0.35); color: #4ecca3; padding: 3px 10px; border-radius: 12px; cursor: pointer; font-size: 0.8em; transition: all 0.2s; white-space: nowrap; }
-    .preset-btn:hover { background: rgba(78,204,163,0.35); }
-    .preset-btn.active-preset { background: rgba(78,204,163,0.6); color: #1e3c72; font-weight: bold; }
-    .close-btn { display: block; }
+      .close-btn { display: block; }
       .dropdown-menu { position: fixed; top: 50%; left: 50%; transform: translate(-50%,-50%); width: 90%; max-width: 300px; }
     }
-
-    /* ── LG TV / Smart TV optimeringar ─────────────────────────────── */
-    @media (min-width: 1280px) and (pointer: coarse),
-           (min-width: 1280px) and (hover: none) {
-      /* Större klickytor för TV-fjärrkontroll */
-      .nav-btn       { padding: 14px 28px; font-size: 1.1em; }
-      .channel-item  { padding: 14px 12px; font-size: 1.05em; margin: 6px 0; }
-      .btn           { padding: 12px 22px; font-size: 1em; }
-      .category-title{ font-size: 1.2em; padding: 12px; }
-      .video-title   { font-size: 1.5em; }
-      .channel-list  { width: 320px; }
-      .proxy-bar     { font-size: 0.95em; padding: 10px 20px; }
-      .preset-btn    { padding: 6px 14px; font-size: 0.9em; }
-    }
-    /* TV fullskärmsläge — spelaren fyller hela skärmen */
-    body.tv-mode .container       { height: calc(100vh - 170px); }
-    body.tv-mode .channel-list    { width: 300px; }
-    body.tv-mode video            { object-fit: fill; }
   </style>
 </head>
 <body>
   <div class="header">
     <h1>XOM TV</h1>
     <p>Alla iranska TV-kanaler</p>
-  </div>
-
-  <!-- ── Proxy bar ─────────────────────────────────────────────────── -->
-  <div class="proxy-bar">
-    <label>🌐 Proxy:</label>
-    <input class="proxy-input" id="proxy-url" type="text"
-      placeholder="http://din-proxy:8080/  (lämna tomt = ingen proxy)"
-      oninput="updateProxy()">
-    <span class="proxy-status off" id="proxy-status">Av</span>
-    <button class="preset-btn" onclick="setPreset('cors-anywhere')">cors-anywhere</button>
-    <button class="preset-btn" onclick="setPreset('allorigins')">allorigins.win</button>
-    <button class="preset-btn" onclick="setPreset('custom')">+ Egen</button>
-    <button class="btn" style="padding:4px 12px;font-size:0.82em;" onclick="clearProxy()">✕ Rensa</button>
   </div>
 
   <div class="nav-buttons">
@@ -177,7 +124,13 @@
 <script>
   const channels = {
     national: [
-      // lenz.splus.ir — CORS öppen, fungerar med HLS.js
+      // FIXAD TV1 EXTRA - Använder parsatv.com iframe (fungerar som på IMVBox)
+      { name: 'TV1 EXTRA', url: 'http://www.parsatv.com/embed.php?name=Shabake-1&auto=true', method: 'iframe', color: 'green' },
+      
+      // Backup via IMVBox ifall parsatv inte fungerar
+      { name: 'TV1 (via IMVBox)', url: 'http://www.imvbox.tv/en/iribtv1/live-channel/play', method: 'iframe', color: 'blue' },
+      
+      // Dina befintliga kanaler
       { name: 'TV1',          url: 'https://lenz.splus.ir/PLTV/88888888/224/3221226637/1.m3u8',        color: 'green' },
       { name: 'TV2',          url: 'https://lenz.splus.ir/PLTV/88888888/224/3221226176/2.m3u8',        color: 'green' },
       { name: 'TV3',          url: 'https://lenz.splus.ir/PLTV/88888888/224/3221226868/3.m3u8',        color: 'green' },
@@ -200,18 +153,15 @@
       { name: 'Quran',        url: 'https://lenz.splus.ir/PLTV/88888888/224/3221226144/2.m3u8',        color: 'green' },
       { name: 'Pooya',        url: 'https://lenz.splus.ir/PLTV/88888888/224/3221226145/2.m3u8',        color: 'green' },
       { name: 'Sepehr',       url: 'https://lenz.splus.ir/PLTV/88888888/224/3221226161/2.m3u8',        color: 'green' },
-      // presstv.ir — CORS öppen
       { name: 'iFilm Farsi',   url: 'https://live.presstv.ir/hls/ifilmfa.m3u8',                       color: 'blue' },
       { name: 'iFilm Dari',    url: 'https://live.presstv.ir/hls/ifilm2.m3u8',                        color: 'blue' },
       { name: 'iFilm English', url: 'https://live.presstv.ir/hls/ifilmen.m3u8',                       color: 'blue' },
       { name: 'iFilm Arabic',  url: 'https://live.presstv.ir/hls/ifilmar.m3u8',                       color: 'blue' },
-      // telewebion — öppnas som iframe (CORS-problem med direkt HLS)
       { name: 'Javaneh',      url: 'https://telewebion.ir/live/javaneh',     color: 'purple', method: 'iframe' },
       { name: 'Nava',         url: 'https://telewebion.ir/live/nava',        color: 'purple', method: 'iframe' },
       { name: 'Nama',         url: 'https://telewebion.ir/live/nama',        color: 'purple', method: 'iframe' },
       { name: 'Roya',         url: 'https://telewebion.ir/live/iribu',       color: 'purple', method: 'iframe' },
       { name: 'Nesfejahan',   url: 'https://telewebion.ir/live/nesfejahan',  color: 'purple', method: 'iframe' },
-      // sepehrtv — iframe
       { name: 'Sepehr (live)', url: 'https://beta.sepehrtv.ir/live/49',                               color: 'cyan', method: 'iframe' },
       { name: 'Faratar',       url: 'https://beta.sepehrtv.ir/live/196462',                            color: 'cyan', method: 'iframe' },
     ],
@@ -290,14 +240,12 @@
       { name: 'UTV Hawler',       url: 'https://utvhawler.net/index.htm',   method: 'external', color: 'orange' },
     ],
     karwan: [
-      // Kids (blue)
       { name: 'Kidco TV',           url: 'https://karwan.tv/kidco-tv',              method: 'external', color: 'blue',    subgroup: 'blue' },
       { name: 'MMN Kids',           url: 'https://karwan.tv/mmn-kids',              method: 'external', color: 'blue',    subgroup: 'blue' },
       { name: 'NRT 3 Kids',         url: 'https://karwan.tv/nrt-3-kids',            method: 'external', color: 'blue',    subgroup: 'blue' },
       { name: 'Kurdmax Pepule',     url: 'https://karwan.tv/kurdmax-pepule',        method: 'external', color: 'blue',    subgroup: 'blue' },
       { name: 'Jojo Mama',          url: 'https://karwan.tv/jojo-mama',             method: 'external', color: 'blue',    subgroup: 'blue' },
       { name: 'Astera Baby',        url: 'https://karwan.tv/astera-baby',           method: 'external', color: 'blue',    subgroup: 'blue' },
-      // Movie (purple)
       { name: 'MMN Movies',         url: 'https://karwan.tv/mmn-movies',            method: 'external', color: 'purple',  subgroup: 'purple' },
       { name: 'Soran Entertain.',   url: 'https://karwan.tv/soran-entertainment-tv',method: 'external', color: 'purple',  subgroup: 'purple' },
       { name: 'Bnar Movies',        url: 'https://karwan.tv/bnar-movies',           method: 'external', color: 'purple',  subgroup: 'purple' },
@@ -308,7 +256,6 @@
       { name: 'Astera Movies',      url: 'https://karwan.tv/astera-movies',         method: 'external', color: 'purple',  subgroup: 'purple' },
       { name: 'Derwaze TV',         url: 'https://karwan.tv/derwaze-tv',            method: 'external', color: 'purple',  subgroup: 'purple' },
       { name: 'Bnar Action',        url: 'https://karwan.tv/bnar-action',           method: 'external', color: 'purple',  subgroup: 'purple' },
-      // Dubbad (pink)
       { name: 'MMN Drama',          url: 'https://karwan.tv/mmn-drama',             method: 'external', color: 'pink',    subgroup: 'pink' },
       { name: 'MMN Show',           url: 'https://karwan.tv/mmn-show',              method: 'external', color: 'pink',    subgroup: 'pink' },
       { name: 'Astera Show',        url: 'https://karwan.tv/astera-show',           method: 'external', color: 'pink',    subgroup: 'pink' },
@@ -325,13 +272,11 @@
       { name: 'Zaxo TV',            url: 'https://karwan.tv/zaxo-tv',               method: 'external', color: 'pink',    subgroup: 'pink' },
       { name: 'Kurdmax Show',       url: 'https://karwan.tv/kurdmax-show-tv',       method: 'external', color: 'pink',    subgroup: 'pink' },
       { name: 'Mix TV',             url: 'https://karwan.tv/mix-tv',                method: 'external', color: 'pink',    subgroup: 'pink' },
-      // Blandad (grey)
       { name: 'Karwan Duhok',       url: 'https://karwan.tv/duhok-tv',              method: 'external', color: 'grey',    subgroup: 'grey' },
       { name: 'Cihan TV',           url: 'https://karwan.tv/cihan-tv',              method: 'external', color: 'grey',    subgroup: 'grey' },
       { name: 'Khak TV',            url: 'https://karwan.tv/khak-tv',               method: 'external', color: 'grey',    subgroup: 'grey' },
       { name: 'Zed TV Plus',        url: 'https://karwan.tv/zed-tv-plus',           method: 'external', color: 'grey',    subgroup: 'grey' },
       { name: 'Karwan Slemani',     url: 'https://karwan.tv/slemani-tv',            method: 'external', color: 'grey',    subgroup: 'grey' },
-      // Music (yellow)
       { name: 'Sima TV',            url: 'https://karwan.tv/sima-tv',               method: 'external', color: 'yellow',  subgroup: 'yellow' },
       { name: 'Shna TV',            url: 'https://karwan.tv/shna-tv',               method: 'external', color: 'yellow',  subgroup: 'yellow' },
       { name: 'Kurd 7',             url: 'https://karwan.tv/kurd-7',                method: 'external', color: 'yellow',  subgroup: 'yellow' },
@@ -344,12 +289,10 @@
       { name: 'Kurdana TV',         url: 'https://karwan.tv/kurdana-tv',            method: 'external', color: 'yellow',  subgroup: 'yellow' },
       { name: 'Azadi TV',           url: 'https://karwan.tv/azadi-tv',              method: 'external', color: 'yellow',  subgroup: 'yellow' },
       { name: 'Kanal 21',           url: 'https://karwan.tv/kanali-21',             method: 'external', color: 'yellow',  subgroup: 'yellow' },
-      // Dokumentär (maroon)
       { name: 'MMN Documentary',    url: 'https://karwan.tv/mmn-documentary',       method: 'external', color: 'maroon',  subgroup: 'maroon' },
       { name: 'Astera Documentary', url: 'https://karwan.tv/astera-documentary',    method: 'external', color: 'maroon',  subgroup: 'maroon' },
       { name: 'Reng Documentary',   url: 'https://karwan.tv/reng-documentary',      method: 'external', color: 'maroon',  subgroup: 'maroon' },
       { name: 'Zed TV',             url: 'https://karwan.tv/zed-tv',                method: 'external', color: 'maroon',  subgroup: 'maroon' },
-      // Dini (green)
       { name: 'NRT 4',              url: 'https://karwan.tv/nrt-4',                 method: 'external', color: 'green',   subgroup: 'green' },
       { name: 'Mihrab TV',          url: 'https://karwan.tv/mihrab-tv',             method: 'external', color: 'green',   subgroup: 'green' },
       { name: 'UTV Duhok',          url: 'https://karwan.tv/utv-duhok',             method: 'external', color: 'green',   subgroup: 'green' },
@@ -358,14 +301,11 @@
       { name: 'Farmoda TV',         url: 'https://karwan.tv/farmoda-tv',            method: 'external', color: 'green',   subgroup: 'green' },
       { name: 'Ranya TV',           url: 'https://karwan.tv/ranya-tv',              method: 'external', color: 'green',   subgroup: 'green' },
       { name: 'Aro Family',         url: 'https://karwan.tv/aro-family',            method: 'external', color: 'green',   subgroup: 'green' },
-      // Kultur (brown)
       { name: 'Dever TV',           url: 'https://karwan.tv/dever-tv',              method: 'external', color: 'brown',   subgroup: 'brown' },
       { name: 'Rasan TV',           url: 'https://karwan.tv/rasan-tv',              method: 'external', color: 'brown',   subgroup: 'brown' },
-      // Srodi Dini (magenta)
       { name: 'Dimen TV',           url: 'https://karwan.tv/dimen-tv',              method: 'external', color: 'magenta', subgroup: 'magenta' },
       { name: 'Bangxwazen Badinan', url: 'https://karwan.tv/bangxwazen-badinan-tv', method: 'external', color: 'magenta', subgroup: 'magenta' },
       { name: 'Esra TV',            url: 'https://karwan.tv/esra-tv',               method: 'external', color: 'magenta', subgroup: 'magenta' },
-      // Nyhet (beige)
       { name: 'Kurd Channel',       url: 'https://karwan.tv/kurd-channel',          method: 'external', color: 'beige',   subgroup: 'beige' },
       { name: 'Cira TV',            url: 'https://karwan.tv/cira-tv',               method: 'external', color: 'beige',   subgroup: 'beige' },
       { name: 'Karwan Nalia TV',    url: 'https://karwan.tv/nalia-tv',              method: 'external', color: 'beige',   subgroup: 'beige' },
@@ -377,11 +317,8 @@
     websites: [
       { name: 'IMVBox',         url: 'https://www.imvbox.com/en',              method: 'external', color: 'orange' },
       { name: 'TV.GARDEN',         url: 'https://famelack.com/ir',              method: 'external', color: 'orange' },
-      { name: 'TV.GARDEN',          url: 'https://famelack.com/ir',            color: 'cyan', method: 'iframe' },
       { name: 'YJC',         url: 'https://www.yjc.ir/fa/live',              method: 'external', color: 'orange' },
-      { name: 'YJC',          url: 'https://www.yjc.ir/fa/live',            color: 'cyan', method: 'iframe' },
       { name: 'YOZONLINE',         url: 'https://yozonline.ir/tv1/',              method: 'external', color: 'orange' },
-      { name: 'YOZONLINE',          url: 'https://yozonline.ir/tv1/',            color: 'cyan', method: 'iframe' },
       { name: 'Persianity',     url: 'https://persianity.com',                 method: 'external', color: 'orange' },
       { name: 'Parsa TV',       url: 'https://parsatv.com',                    method: 'external', color: 'orange' },
       { name: 'MDB Max',        url: 'https://mdbmax.com/',                    method: 'external', color: 'orange' },
@@ -397,19 +334,16 @@
     ]
   };
 
-
   let hlsInst = null;
   let cur = null;
   let favs = [];
   try { favs = JSON.parse(localStorage.getItem('xomfavs') || '[]'); } catch(e) { favs = []; }
-  // LG webOS: testa om localStorage fungerar
   const lsOK = (function(){ try { localStorage.setItem('_t','1'); localStorage.removeItem('_t'); return true; } catch(e){ return false; } })();
   let curFilter = null;
   let curSub = 'all';
 
   function e(s) { return s.replace(/\\/g,'\\\\').replace(/'/g,"\\'"); }
 
-  // ── Render channel list ──────────────────────────────────────────────────
   function render(filter, sub) {
     curFilter = filter; curSub = sub || 'all';
     const catNames = { national:'Nationella', regional:'Regionala', kurdish:'Kurdiska', karwan:'Karwan TV', websites:'Webbplatser' };
@@ -439,19 +373,22 @@
     document.getElementById('ch-container').innerHTML = html;
   }
 
-  // ── Navigation ───────────────────────────────────────────────────────────
   function setActive(btn) {
     document.querySelectorAll('.nav-btn').forEach(b=>b.classList.remove('active'));
     btn.classList.add('active');
   }
+  
   function showAll() {
     setActive(document.querySelector('.nav-btn'));
     closeDD(); render(null,'all');
   }
+  
   function filterCat(ev, cat) { setActive(ev.target); closeDD(); render(cat,'all'); }
+  
   function filterKarwan(sub) {
     setActive(document.getElementById('karwan-btn')); closeDD(); render('karwan', sub);
   }
+  
   function toggleDropdown(e) {
     e.stopPropagation();
     const dd = document.getElementById('karwan-dd');
@@ -459,11 +396,13 @@
     dd.classList.add('show');
     setTimeout(()=>document.addEventListener('click', outsideDD), 10);
   }
+  
   function closeDD() { document.getElementById('karwan-dd').classList.remove('show'); document.removeEventListener('click', outsideDD); }
+  
   function outsideDD(e) { if (!document.getElementById('karwan-dd').contains(e.target) && !document.getElementById('karwan-btn').contains(e.target)) closeDD(); }
+  
   function toggleList() { document.getElementById('channel-list').classList.toggle('show'); }
 
-  // ── Favorites ────────────────────────────────────────────────────────────
   function fav(url, name) {
     const i = favs.findIndex(f=>f.url===url);
     if (i>-1) favs.splice(i,1); else favs.push({url,name});
@@ -471,7 +410,7 @@
     render(curFilter, curSub);
   }
 
-  // ── Player ───────────────────────────────────────────────────────────────
+  // FÖRBÄTTRAD play-funktion med bättre iframe-hantering
   function play(url, name, method, referer) {
     if (window.innerWidth <= 768) document.getElementById('channel-list').classList.remove('show');
     cur = {url, name, method, referer};
@@ -484,58 +423,58 @@
     const wrap = document.getElementById('vwrap');
 
     if (method === 'iframe') {
-      // Telewebion: zooma in på video-spelaren och dölj navbar/menyer
-      // Andra sidor: zooma ut så hela hemsidan ryms
-      const isTelewebion = url.includes('telewebion.ir');
-      if (isTelewebion) {
-        // Telewebion visar video i övre halvan — skrolla ner lite och zooma in
-        // så att videon fyller hela fönstret
-        wrap.innerHTML = `<div style="width:100%;height:100%;overflow:hidden;position:relative;">
-          <iframe src="${url}"
-            allowfullscreen allow="autoplay; fullscreen"
-            id="tw-iframe"
-            style="width:200%;height:200%;transform:scale(0.5) translateY(-12%);transform-origin:0 0;border:none;"
-            onload="tweakTelewebion(this)">
-          </iframe>
-        </div>`;
-      } else {
-        // Sepehrtv och andra: zooma ut så hela sidan syns
-        wrap.innerHTML = `<div style="width:100%;height:100%;overflow:hidden;position:relative;">
-          <iframe src="${url}"
-            allowfullscreen allow="autoplay; fullscreen"
-            style="width:177.78%;height:177.78%;transform:scale(0.5625);transform-origin:0 0;border:none;">
-          </iframe>
+      // Smart iframe-hantering för olika källor
+      let iframeHtml = '';
+      
+      if (url.includes('parsatv.com')) {
+        // Parsatv fungerar perfekt - används av IMVBox
+        iframeHtml = `<iframe src="${url}" allowfullscreen allow="autoplay; fullscreen" style="width:100%; height:100%; border:none;"></iframe>`;
+      } 
+      else if (url.includes('telewebion')) {
+        // Telewebion behöver skalas
+        iframeHtml = `<div style="width:100%;height:100%;overflow:hidden;position:relative;">
+          <iframe src="${url}" allowfullscreen allow="autoplay; fullscreen" style="width:200%;height:200%;transform:scale(0.5) translateY(-12%);transform-origin:0 0;border:none;"></iframe>
         </div>`;
       }
+      else if (url.includes('imvbox.tv')) {
+        // IMVBox fungerar direkt
+        iframeHtml = `<iframe src="${url}" allowfullscreen allow="autoplay; fullscreen" style="width:100%; height:100%; border:none;"></iframe>`;
+      }
+      else {
+        // Standard iframe för övriga
+        iframeHtml = `<iframe src="${url}" allowfullscreen allow="autoplay; fullscreen" style="width:100%; height:100%; border:none;"></iframe>`;
+      }
+      
+      wrap.innerHTML = iframeHtml;
       render(curFilter, curSub);
       return;
     }
 
-    // HLS — enkel och direkt, ingen pre-fetch overhead
+    // HLS
     wrap.innerHTML = '<video id="vplayer" controls autoplay style="width:100%;height:100%;"></video>';
     const vid = document.getElementById('vplayer');
 
     if (Hls.isSupported()) {
       hlsInst = new Hls({
-        enableWorker:          true,
-        startPosition:         -1,      // live-edge direkt
-        liveSyncDurationCount:  3,
-        maxBufferLength:        10,
-        maxMaxBufferLength:     30,
-        backBufferLength:       10,
+        enableWorker: true,
+        startPosition: -1,
+        liveSyncDurationCount: 3,
+        maxBufferLength: 10,
+        maxMaxBufferLength: 30,
+        backBufferLength: 10,
         xhrSetup(xhr) {
           const ua = document.getElementById('ua-select').value;
-          if (ua)      try { xhr.setRequestHeader('User-Agent', ua); }      catch(err){}
-          if (referer) try { xhr.setRequestHeader('Referer',   referer); } catch(err){}
+          if (ua) try { xhr.setRequestHeader('User-Agent', ua); } catch(err){}
+          if (referer) try { xhr.setRequestHeader('Referer', referer); } catch(err){}
         }
       });
-      hlsInst.loadSource(proxyUrl(url));
+      hlsInst.loadSource(url);
       hlsInst.attachMedia(vid);
       hlsInst.on(Hls.Events.MANIFEST_PARSED, () => vid.play().catch(()=>{}));
       hlsInst.on(Hls.Events.ERROR, (_, d) => {
         if (!d.fatal) return;
-        if      (d.type === Hls.ErrorTypes.NETWORK_ERROR) setTimeout(()=>{ if(hlsInst) hlsInst.startLoad(); }, 2000);
-        else if (d.type === Hls.ErrorTypes.MEDIA_ERROR)   hlsInst.recoverMediaError();
+        if (d.type === Hls.ErrorTypes.NETWORK_ERROR) setTimeout(()=>{ if(hlsInst) hlsInst.startLoad(); }, 2000);
+        else if (d.type === Hls.ErrorTypes.MEDIA_ERROR) hlsInst.recoverMediaError();
         else showErr();
       });
     } else if (vid.canPlayType('application/vnd.apple.mpegurl')) {
@@ -546,91 +485,23 @@
     render(curFilter, curSub);
   }
 
-
-  // Försök dölja telewebion navbar via postMessage (fungerar ej cross-origin)
-  // men justera translateY beroende på skärmstorlek för bättre centrering
-  function tweakTelewebion(iframe) {
-    const isMobile = window.innerWidth <= 768;
-    // På mobil: flytta upp iframen mer så videon centreras
-    iframe.style.transform = isMobile
-      ? 'scale(0.5) translateY(-8%)'
-      : 'scale(0.5) translateY(-15%)';
-  }
-
   function showErr() {
     document.getElementById('vwrap').innerHTML = `<div class="error-msg"><h3>⚠️ Kunde inte ladda stream</h3><br><button class="btn" onclick="reload()">↻ Försök igen</button></div>`;
   }
+  
   function reload() { if (cur) play(cur.url, cur.name, cur.method, cur.referer); }
+  
   function pip() {
     const v = document.getElementById('vplayer');
     if (!v || !document.pictureInPictureEnabled) return;
     document.pictureInPictureElement ? document.exitPictureInPicture() : v.requestPictureInPicture().catch(()=>{});
   }
+  
   function fs() {
     const w = document.getElementById('vwrap');
     document.fullscreenElement ? document.exitFullscreen() : w.requestFullscreen().catch(()=>{});
   }
 
-
-  // ── Proxy ────────────────────────────────────────────────────────────────
-  // Hur det funkar:
-  //   Ingen proxy:  HLS.js fetchar stream-URL:en direkt
-  //   Med proxy:    stream-URL:en wrappas → proxy_base + encoded_stream_url
-  //                 Proxyn fetchar åt browsern och lägger till CORS-headers
-  //
-  // Preset: cors-anywhere (självhostad) → https://github.com/Rob--W/cors-anywhere
-  //         allorigins.win              → gratis publik proxy (långsam, teständamål)
-  //         Egen                        → din egen proxy t.ex. i Turkiet/Azerbajdzjan
-
-  const PRESETS = {
-    'cors-anywhere': 'https://cors-anywhere.herokuapp.com/',
-    'allorigins':    'https://api.allorigins.win/raw?url=',
-  };
-
-  let proxyBase = '';   // tom = ingen proxy
-
-  function proxyUrl(url) {
-    if (!proxyBase) return url;
-    // Om proxyn tar URL som query-parameter (allorigins-stil)
-    if (proxyBase.includes('?url=') || proxyBase.includes('&url='))
-      return proxyBase + encodeURIComponent(url);
-    // Annars prefix-stil (cors-anywhere-stil)
-    return proxyBase + url;
-  }
-
-  function updateProxy() {
-    proxyBase = document.getElementById('proxy-url').value.trim();
-    const st = document.getElementById('proxy-status');
-    if (proxyBase) { st.textContent = '✓ Aktiv'; st.className = 'proxy-status on'; }
-    else           { st.textContent = 'Av';      st.className = 'proxy-status off'; }
-    // Markera ingen preset som aktiv
-    document.querySelectorAll('.preset-btn').forEach(b => b.classList.remove('active-preset'));
-    // Kontrollera om nuvarande värde matchar en preset
-    Object.entries(PRESETS).forEach(([key, val]) => {
-      if (proxyBase === val) {
-        const btn = document.querySelector(`.preset-btn[onclick="setPreset('${key}')"]`);
-        if (btn) btn.classList.add('active-preset');
-      }
-    });
-    if (lsOK) try { localStorage.setItem('xomproxy', proxyBase); } catch(e) {}
-    if (cur && cur.method === 'hls') reload();   // ladda om aktiv kanal med ny proxy
-  }
-
-  function setPreset(key) {
-    const url = key === 'custom' ? '' : (PRESETS[key] || '');
-    document.getElementById('proxy-url').value = url;
-    updateProxy();
-    if (key === 'custom') document.getElementById('proxy-url').focus();
-  }
-
-  function clearProxy() {
-    document.getElementById('proxy-url').value = '';
-    updateProxy();
-  }
-
-
-
-  // ── TV-läge ──────────────────────────────────────────────────────────────
   let tvMode = false;
 
   function toggleTV() {
@@ -638,7 +509,6 @@
     document.body.classList.toggle('tv-mode', tvMode);
     document.getElementById('tv-btn').textContent = tvMode ? '🖥️ Normal' : '📺 TV-läge';
     if (tvMode) {
-      // Fullskärm hela sidan på TV
       document.documentElement.requestFullscreen && document.documentElement.requestFullscreen().catch(()=>{});
     } else {
       document.fullscreenElement && document.exitFullscreen();
@@ -646,24 +516,19 @@
     if (lsOK) try { localStorage.setItem('xomtv', tvMode ? '1' : ''); } catch(e) {}
   }
 
-  // Auto-detekta LG webOS / smart TV
   (function detectTV() {
     const ua = navigator.userAgent || '';
-    const isTV = /SmartTV|webOS|SMART-TV|HbbTV|NetCast|BRAVIA|Tizen/i.test(ua)
-              || window.innerWidth >= 1920 && ('ontouchstart' in window === false) && navigator.maxTouchPoints === 0;
+    const isTV = /SmartTV|webOS|SMART-TV|HbbTV|NetCast|BRAVIA|Tizen/i.test(ua) || window.innerWidth >= 1920 && ('ontouchstart' in window === false) && navigator.maxTouchPoints === 0;
     if (isTV) {
       document.body.classList.add('tv-mode');
       tvMode = true;
       document.getElementById('tv-btn').textContent = '🖥️ Normal';
     }
-    // Återställ sparat TV-läge
     if (lsOK) {
       try { if (localStorage.getItem('xomtv') === '1') { document.body.classList.add('tv-mode'); tvMode = true; document.getElementById('tv-btn').textContent = '🖥️ Normal'; } } catch(e) {}
-      try { const saved = localStorage.getItem('xomproxy') || ''; if (saved) { document.getElementById('proxy-url').value = saved; updateProxy(); } } catch(e) {}
     }
   })();
 
-  // Init
   render(null, 'all');
 </script>
 </body>
