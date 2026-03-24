@@ -124,6 +124,7 @@
 <script>
   const channels = {
     national: [
+      // Dina befintliga kanaler
       { name: 'TV1',          url: 'https://lenz.splus.ir/PLTV/88888888/224/3221226637/1.m3u8',        color: 'green' },
       { name: 'TV2',          url: 'https://lenz.splus.ir/PLTV/88888888/224/3221226176/2.m3u8',        color: 'green' },
       { name: 'TV3',          url: 'https://lenz.splus.ir/PLTV/88888888/224/3221226868/3.m3u8',        color: 'green' },
@@ -234,9 +235,9 @@
       { name: 'Zarok Sorani',     url: 'https://zindisorani.zaroktv.com.tr/hls/stream.m3u8',                                                     color: 'green' },
       { name: 'Payam TV',         url: 'https://media2.streambrothers.com:1936/8218/8218/chunklist_w1239498607.m3u8',                             color: 'green' },
       { name: 'TRT Kurdî',        url: 'https://tv-trtkurdi.medya.trt.com.tr/master_1440.m3u8',                                                   color: 'green' },
-      { name: 'Ava TV',           url: 'https://www.ava.news/livewatch',    method: 'external', color: 'orange' },
+      { name: 'Ava TV',           url: 'https://www.ava.news/livewatch',                                                      method: 'external', color: 'orange' },
       { name: 'Avar TV',         url: 'https://avr.host247.net/live/AvarTv/tracks-v1a1/mono.m3u8',                                                color: 'green' },
-      { name: 'UTV Hawler',       url: 'https://vsd260.okcdn.ru/hls/3527542770279.m3u8/sig/0-Jk3bWJ_ws/expires/1773834966456/srcIp/192.44.242.19/urls/185.226.52.53/clientType/0/srcAg/CHROME/mid/4728653618791/video.m3u8?p',   color: 'green' },
+      { name: 'UTV Hawler',       url: 'https://kurdtvs.net/utv-hawler',                                                      method: 'external', color: 'orange' },
     ],
     karwan: [
       { name: 'Kidco TV',           url: 'https://karwan.tv/kidco-tv',              method: 'external', color: 'blue',    subgroup: 'blue' },
@@ -409,59 +410,8 @@
     render(curFilter, curSub);
   }
 
-  // --- Popup-spelare för UTV Hawler (HLS) ---
-  function openPlayerWindow(url, name) {
-    const popup = window.open('', '_blank', 'width=800,height=600,resizable=yes,scrollbars=no');
-    if (!popup) {
-      alert('Popup blockerade! Tillåt popup-fönster för denna sida.');
-      return;
-    }
-    const html = `
-      <!DOCTYPE html>
-      <html>
-      <head>
-        <meta charset="UTF-8">
-        <title>${name} – XOM TV Player</title>
-        <script src="https://cdn.jsdelivr.net/npm/hls.js@latest"><\/script>
-        <style>
-          * { margin: 0; padding: 0; box-sizing: border-box; }
-          body { background: #000; display: flex; align-items: center; justify-content: center; min-height: 100vh; }
-          video { width: 100%; height: 100%; object-fit: contain; }
-        </style>
-      </head>
-      <body>
-        <video id="player" controls autoplay style="width:100%; height:100%;"></video>
-        <script>
-          const url = '${url}';
-          const video = document.getElementById('player');
-          if (Hls.isSupported()) {
-            const hls = new Hls();
-            hls.loadSource(url);
-            hls.attachMedia(video);
-            hls.on(Hls.Events.MANIFEST_PARSED, () => video.play().catch(e => console.log(e)));
-          } else if (video.canPlayType('application/vnd.apple.mpegurl')) {
-            video.src = url;
-            video.play().catch(e => console.log(e));
-          } else {
-            document.body.innerHTML = '<div style="color:white;text-align:center;padding:2rem;">Din webbläsare stöder inte HLS.</div>';
-          }
-        <\/script>
-      </body>
-      </html>
-    `;
-    popup.document.write(html);
-    popup.document.close();
-  }
-
-  // Uppdaterad play-funktion med specialfall för UTV Hawler
+  // FÖRBÄTTRAD play-funktion med bättre iframe-hantering
   function play(url, name, method, referer) {
-    // Om kanalen heter "UTV Hawler" och det är en vanlig HLS-ström (inte iframe/extern)
-    if (name === 'UTV Hawler' && method !== 'iframe' && method !== 'external') {
-      openPlayerWindow(url, name);
-      return; // Avbryt så att huvudspelaren inte påverkas
-    }
-
-    // Original-logik (oförändrad från tidigare)
     if (window.innerWidth <= 768) document.getElementById('channel-list').classList.remove('show');
     cur = {url, name, method, referer};
     document.getElementById('ch-title').textContent = name;
@@ -473,18 +423,28 @@
     const wrap = document.getElementById('vwrap');
 
     if (method === 'iframe') {
+      // Smart iframe-hantering för olika källor
       let iframeHtml = '';
+      
       if (url.includes('parsatv.com')) {
+        // Parsatv fungerar perfekt - används av IMVBox
         iframeHtml = `<iframe src="${url}" allowfullscreen allow="autoplay; fullscreen" style="width:100%; height:100%; border:none;"></iframe>`;
       } 
       else if (url.includes('telewebion')) {
+        // Telewebion behöver skalas
         iframeHtml = `<div style="width:100%;height:100%;overflow:hidden;position:relative;">
           <iframe src="${url}" allowfullscreen allow="autoplay; fullscreen" style="width:200%;height:200%;transform:scale(0.5) translateY(-12%);transform-origin:0 0;border:none;"></iframe>
         </div>`;
       }
-      else {
+      else if (url.includes('imvbox.tv')) {
+        // IMVBox fungerar direkt
         iframeHtml = `<iframe src="${url}" allowfullscreen allow="autoplay; fullscreen" style="width:100%; height:100%; border:none;"></iframe>`;
       }
+      else {
+        // Standard iframe för övriga
+        iframeHtml = `<iframe src="${url}" allowfullscreen allow="autoplay; fullscreen" style="width:100%; height:100%; border:none;"></iframe>`;
+      }
+      
       wrap.innerHTML = iframeHtml;
       render(curFilter, curSub);
       return;
